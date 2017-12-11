@@ -28,6 +28,10 @@ const parseUrl = function parseUrl(url) {
 	return { path: url, queryObj: {} };
 };
 
+const checkCouldHaveBody = function checkCouldHaveBody(method = '') {
+	return !~['GET', 'HEAD'].indexOf(method.toUpperCase());
+};
+
 const resolveUrls = function resolveUrls(urls) {
 	const paths = [];
 	const separateBySlash = function separateBySlash(str) {
@@ -97,23 +101,22 @@ const compose = function compose(request) {
 		const composedBody = composeBody(body, composedHeaders);
 		const composedURL = composeURL(url, query);
 		const { path, queryObj } = parseUrl(composedURL);
-		return Promise
-			.all([
-				request._applyQueryTransformer(queryObj),
-				request._applyUrlTransformer(path),
-				request._applyHeadersTransformer(composedHeaders),
-				request._applyBodyTransformer(composedBody),
-			])
-			.then((res) => {
-				const query = qs.stringify(res[0]);
-				return {
-					url: res[1] + (query ? `?${query}` : ''),
-					headers: res[2],
-					body: res[3],
-					...options,
-				};
-			})
-		;
+		const couldHaveBody = checkCouldHaveBody(options.method);
+		const promises = [
+			request._applyQueryTransformer(queryObj),
+			request._applyUrlTransformer(path),
+			request._applyHeadersTransformer(composedHeaders),
+		];
+		if (couldHaveBody) {
+			promises.push(request._applyBodyTransformer(composedBody));
+		}
+		return Promise.all(promises).then(([queryObj, path, headers, body]) => {
+			const query = qs.stringify(queryObj);
+			const url = path + (query ? `?${query}` : '');
+			const res = { url, headers, ...options };
+			if (couldHaveBody) { res.body = body; }
+			return res;
+		});
 	}
 	catch (err) {
 		return Promise.reject(err);
@@ -224,6 +227,7 @@ assign(RequestExtra.prototype, {
 		return compose(request)
 			.then((options) => {
 				const { responseType, timeout, simple } = options;
+				const { method = 'GET' } = options;
 				const fetchPromise = fetch(options.url, options)
 					.then((res) => request._applyResponseTransformer(res))
 					.then((res) => simple ? handleSimple(res) : res)

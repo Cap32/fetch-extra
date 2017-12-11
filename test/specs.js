@@ -307,54 +307,75 @@ export default (host) => {
 
 	describe('body', function () {
 		const url = 'http://localhost';
+		const method = 'POST';
 
 		it('body', async () => {
-			const client = request(url, { body: { hello: 'world' } });
+			const client = request({
+				url,
+				method,
+				body: { hello: 'world' },
+			});
 			const composed = await client.compose();
 			const { body } = composed;
 			assert.deepEqual(body, { hello: 'world' });
 		});
 
 		it('extends body', async () => {
-			const client = request(url, { body: { hello: 'world' } })
-				.set('body', { it: 'works' })
-			;
+			const client = request({
+				url,
+				method,
+				body: { hello: 'world' },
+			}).set('body', { it: 'works' });
 			const composed = await client.compose();
 			const { body } = composed;
 			assert.deepEqual(body, { hello: 'world', it: 'works' });
 		});
 
 		it('override body', async () => {
-			const client = request(url, { body: { hello: 'world' } })
-				.set('body', { hello: 'chris' })
-			;
+			const client = request({
+				url,
+				method,
+				body: { hello: 'world' },
+			}).set('body', { hello: 'chris' });
 			const composed = await client.compose();
 			const { body } = composed;
 			assert.deepEqual(body, { hello: 'chris' });
 		});
 
 		it('modify body', async () => {
-			const client = request(url, { body: { hello: 'world' } })
-				.set('body', (body) => {
-					body.hello = 'chris';
-					body.it = 'works';
-					return body;
-				})
-			;
+			const client = request({
+				url,
+				method,
+				body: { hello: 'world' }
+			}).set('body', (body) => {
+				body.hello = 'chris';
+				body.it = 'works';
+				return body;
+			});
 			const composed = await client.compose();
 			const { body } = composed;
 			assert.deepEqual(body, { hello: 'chris', it: 'works' });
 		});
 
 		it('body with type: json', async () => {
-			const client = request(url, { body: { hello: 'world' }, type: 'json' });
+			const client = request({
+				url,
+				method,
+				body: { hello: 'world' },
+				type: 'json',
+			});
 			const composed = await client.compose();
 			const { body } = composed;
 			assert(body === JSON.stringify({ hello: 'world' }));
 		});
 
 		it('body with type: form', async () => {
-			const client = request(url, { body: { hello: 'world' }, type: 'form' });
+			const client = request({
+				url,
+				method,
+				body: { hello: 'world' },
+				type: 'form',
+			});
 			const composed = await client.compose();
 			const { body } = composed;
 			assert(body === 'hello=world');
@@ -452,6 +473,7 @@ export default (host) => {
 			it('bodyTransformer option', async () => {
 				const client = request({
 					url: 'http://localhost',
+					method: 'POST',
 					body: { hello: 'world' },
 					bodyTransformer: (body) => Object.assign(body, { it: 'works' })
 				});
@@ -460,7 +482,11 @@ export default (host) => {
 			});
 
 			it('addBodyTransformer', async () => {
-				const client = request('http://localhost', { body: { hello: 'world' } });
+				const client = request({
+					url: 'http://localhost',
+					method: 'POST',
+					body: { hello: 'world' },
+				});
 				client.addBodyTransformer((body) => Object.assign(body, {
 					it: 'works',
 				}));
