@@ -227,11 +227,11 @@ assign(RequestExtra.prototype, {
 		return compose(request)
 			.then((options) => {
 				const { responseType, timeout, simple } = options;
-				const { method = 'GET' } = options;
+				const shouldResolve = (res) => responseType && res && res.ok !== false;
 				const fetchPromise = fetch(options.url, options)
 					.then((res) => request._applyResponseTransformer(res))
 					.then((res) => simple ? handleSimple(res) : res)
-					.then((res) => responseType ? res[responseType]() : res)
+					.then((res) => shouldResolve(res) ? res[responseType]() : res)
 					.then((res) => request._applyResponseDataTransformer(res))
 				;
 				const promises = [fetchPromise];

@@ -45,7 +45,12 @@ export default (host) => {
 
 		it('responseType: text', async () => {
 			const body = await request.fetch(`${host}/text`, { responseType: 'text' });
-			assert.equal(body, 'ok');
+			assert(body === 'ok');
+		});
+
+		it('should not handle response while response.ok is false', async () => {
+			const body = await request.fetch(`${host}/404`, { responseType: 'text' });
+			assert(body !== 'ok');
 		});
 	});
 
