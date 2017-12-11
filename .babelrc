@@ -16,7 +16,12 @@
 				["es2015", { "modules": false }],
 				"stage-0",
 			],
-			"plugins": ["add-module-exports"]
+			"plugins": [
+				"add-module-exports",
+				["transform-define", {
+					"typeof window": "object",
+				}],
+			],
 		},
 	}
 }
