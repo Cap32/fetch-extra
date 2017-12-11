@@ -1,0 +1,22 @@
+{
+	"presets": [
+		"stage-0",
+	],
+	"plugins": [
+		["transform-es2015-destructuring", { loose: false }],
+		["transform-es2015-modules-commonjs", { loose: false }],
+		"transform-es2015-parameters",
+		["transform-define", {
+			"typeof window": "undefined",
+		}],
+	],
+	"env": {
+		"cjs": {
+			"presets": [
+				["es2015", { "modules": false }],
+				"stage-0",
+			],
+			"plugins": ["add-module-exports"]
+		},
+	}
+}
