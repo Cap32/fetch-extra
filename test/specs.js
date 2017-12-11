@@ -430,6 +430,24 @@ export default (host) => {
 			});
 		});
 
+		describe('query transformer', function () {
+			it('queryTransformer option', async () => {
+				const client = request(host, {
+					query: { foo: 'bar' },
+					queryTransformer: (query) => Object.assign(query, { baz: 'qux' }),
+				});
+				const composed = await client.compose();
+				assert(composed.url === `${host}?foo=bar&baz=qux`);
+			});
+
+			it('addUrlTransformer', async () => {
+				const client = request(host, { query: { foo: 'bar' } });
+				client.addQueryTransformer((query) => Object.assign(query, { baz: 'qux' }));
+				const composed = await client.compose();
+				assert(composed.url === `${host}?foo=bar&baz=qux`);
+			});
+		});
+
 		describe('body transformer', function () {
 			it('bodyTransformer option', async () => {
 				const client = request({

@@ -1,5 +1,5 @@
 
-import { stringify as serialize } from 'tiny-querystring';
+import * as qs from 'tiny-querystring';
 
 const { assign } = Object;
 const isString = (target) => typeof target === 'string';
@@ -15,6 +15,17 @@ const ContentTypes = {
 
 const ErrorNames = {
 	timeout: 'TimeoutError',
+};
+
+const parseUrl = function parseUrl(url) {
+	const markIndex = (url += '').indexOf('?');
+	if (~markIndex) {
+		return {
+			path: url.substr(0, markIndex),
+			queryObj: qs.parse(url.substr(markIndex + 1)),
+		};
+	}
+	return { path: url, queryObj: {} };
 };
 
 const resolveUrls = function resolveUrls(urls) {
@@ -51,7 +62,7 @@ const resolveUrls = function resolveUrls(urls) {
 const composeURL = function composeURL(url, queries) {
 	const queryStr = queries
 		.reduce((list, query) => {
-			list.push(isObject(query) ? serialize(query) : query);
+			list.push(isObject(query) ? qs.stringify(query) : query);
 			return list;
 		}, [])
 		.join('&')
@@ -68,7 +79,7 @@ const composeBody = function composeBody(body, headers) {
 			return JSON.stringify(body);
 		}
 		else if (contentType === ContentTypes.form) {
-			return serialize(body);
+			return qs.stringify(body);
 		}
 	}
 	return body;
@@ -83,20 +94,25 @@ const compose = function compose(request) {
 	try {
 		const { type, url, query, body, headers, ...options } = request.req;
 		const composedHeaders = composeHeaders(headers, type);
-		const composedURL = composeURL(url, query);
 		const composedBody = composeBody(body, composedHeaders);
+		const composedURL = composeURL(url, query);
+		const { path, queryObj } = parseUrl(composedURL);
 		return Promise
 			.all([
-				request._applyUrlTransformer(composedURL),
+				request._applyQueryTransformer(queryObj),
+				request._applyUrlTransformer(path),
 				request._applyHeadersTransformer(composedHeaders),
 				request._applyBodyTransformer(composedBody),
 			])
-			.then((res) => ({
-				url: res[0],
-				headers: res[1],
-				body: res[2],
-				...options,
-			}))
+			.then((res) => {
+				const query = qs.stringify(res[0]);
+				return {
+					url: res[1] + (query ? `?${query}` : ''),
+					headers: res[2],
+					body: res[3],
+					...options,
+				};
+			})
 		;
 	}
 	catch (err) {
@@ -122,7 +138,7 @@ const flow = function flow(val, fns, context) {
 };
 
 const TransformerHooks = [
-	'Url', 'Body', 'Headers', 'Response', 'ResponseData', 'Error',
+	'Query', 'Url', 'Body', 'Headers', 'Response', 'ResponseData', 'Error',
 ];
 
 const RequestExtra = function RequestExtra(...args) {
