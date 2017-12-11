@@ -224,15 +224,19 @@ assign(RequestExtra.prototype, {
 	},
 	fetch(...args) {
 		const request = this.clone(...args);
+		let response = null;
 		return compose(request)
 			.then((options) => {
 				const { responseType, timeout, simple } = options;
 				const shouldResolve = (res) => responseType && res && res.ok !== false;
+				const setRes = function setRes(resolve) {
+					return (res) => resolve(response = res);
+				};
 				const fetchPromise = fetch(options.url, options)
-					.then((res) => request._applyResponseTransformer(res))
-					.then((res) => simple ? handleSimple(res) : res)
-					.then((res) => shouldResolve(res) ? res[responseType]() : res)
-					.then((res) => request._applyResponseDataTransformer(res))
+					.then(setRes((res) => request._applyResponseTransformer(res)))
+					.then(setRes((res) => simple ? handleSimple(res) : res))
+					.then(setRes((res) => shouldResolve(res) ? res[responseType]() : res))
+					.then(setRes((res) => request._applyResponseDataTransformer(res)))
 				;
 				const promises = [fetchPromise];
 				if (timeout) {
@@ -246,9 +250,11 @@ assign(RequestExtra.prototype, {
 				}
 				return Promise.race(promises);
 			})
-			.catch((err) =>
-				request._applyErrorTransformer(err).then((e) => Promise.reject(e))
-			)
+			.catch((err) => {
+				if (err) { err.response = response; }
+				return request._applyErrorTransformer(err)
+					.then((e) => Promise.reject(e));
+			})
 		;
 	},
 });

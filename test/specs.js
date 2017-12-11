@@ -427,11 +427,19 @@ export default (host) => {
 			;
 		});
 
-		it('simple option', async () => {
+		it('should throw error if `simple: true` and `response.ok: false`', async () => {
 			return request
 				.fetch(`${host}/404`, { simple: true })
 				.then(() => assert(false))
 				.catch((err) => assert(err.status === 404))
+			;
+		});
+
+		it('should contain a reponse object if fetch failed', async () => {
+			return request
+				.fetch(`${host}/404`, { simple: true })
+				.then(() => assert(false))
+				.catch((err) => assert(typeof err.response === 'object'))
 			;
 		});
 	});
