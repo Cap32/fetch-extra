@@ -96,12 +96,12 @@ const composeHeaders = function composeHeaders(headers, type) {
 
 const compose = function compose(request) {
 	try {
-		const { type, url, query, body, headers, ...options } = request.req;
+		const { type, url, query, body, headers, method } = request.req;
 		const composedHeaders = composeHeaders(headers, type);
 		const composedBody = composeBody(body, composedHeaders);
 		const composedURL = composeURL(url, query);
 		const { path, queryObj } = parseUrl(composedURL);
-		const couldHaveBody = checkCouldHaveBody(options.method);
+		const couldHaveBody = checkCouldHaveBody(method);
 		const promises = [
 			request._applyQueryTransformer(queryObj),
 			request._applyUrlTransformer(path),
@@ -113,8 +113,9 @@ const compose = function compose(request) {
 		return Promise.all(promises).then(([queryObj, path, headers, body]) => {
 			const query = qs.stringify(queryObj);
 			const url = path + (query ? `?${query}` : '');
-			const res = { url, headers, ...options };
+			const res = assign({ url, headers }, request.req);
 			if (couldHaveBody) { res.body = body; }
+			else { delete res.body; }
 			return res;
 		});
 	}
@@ -279,6 +280,5 @@ const requestExtra = new RequestExtra();
 const fetchExtra = requestExtra.fetch.bind(requestExtra);
 RequestExtra.fetch = fetchExtra;
 
-export default fetchExtra;
 export const request = RequestExtra;
 export { fetchExtra, RequestExtra };
