@@ -49,6 +49,11 @@ module.exports = (config) => {
 					},
 				],
 			},
+			resolve: {
+				alias: {
+					fetch: './fetch',
+				},
+			}
 		},
 
 		webpackMiddleware: { stats: 'errors-only' },

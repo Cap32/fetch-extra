@@ -28,11 +28,6 @@ export default {
 						['es2015', { modules: false }],
 						'stage-0',
 					],
-					plugins: [
-						['transform-define', {
-							'typeof window': 'object',
-						}],
-					],
 					cacheDirectory: true,
 					babelrc: false,
 				},
@@ -49,6 +44,9 @@ export default {
 	],
 	resolve: {
 		modules: [srcDir, 'node_modules'],
+		alias: {
+			fetch: 'src/fetch',
+		},
 	},
 	devtool: 'source-map',
 };

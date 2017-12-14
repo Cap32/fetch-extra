@@ -1,12 +1,11 @@
 
 import * as qs from 'tiny-querystring';
+import fetch from './fetch';
 
 const { assign } = Object;
 const isString = (target) => typeof target === 'string';
 const isFunction = (target) => typeof target === 'function';
 const isObject = (target) => typeof target === 'object';
-
-const fetch = typeof window === 'object' ? (self || window).fetch : require('node-fetch');
 
 const ContentTypes = {
 	form: 'application/x-www-form-urlencoded',
@@ -110,10 +109,14 @@ const compose = function compose(request) {
 		if (couldHaveBody) {
 			promises.push(request._applyBodyTransformer(composedBody));
 		}
-		return Promise.all(promises).then(([queryObj, path, headers, body]) => {
+		return Promise.all(promises).then((ref) => {
+			const queryObj = ref[0];
+			const path = ref[1];
+			const headers = ref[2];
+			const body = ref[3];
 			const query = qs.stringify(queryObj);
 			const url = path + (query ? `?${query}` : '');
-			const res = assign({ url, headers }, request.req);
+			const res = assign({}, request.req, { url, headers });
 			if (couldHaveBody) { res.body = body; }
 			else { delete res.body; }
 			return res;
