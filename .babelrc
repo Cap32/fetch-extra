@@ -1,22 +1,24 @@
 {
-	"presets": [
-		"stage-0",
-	],
-	"plugins": [
-		["transform-es2015-destructuring", { loose: false }],
-		["transform-es2015-modules-commonjs", { loose: false }],
-		"transform-es2015-parameters",
-		["import-redirect", {
-			"redirect": {
-				"fetch.js$": "node-fetch",
-			},
-		}],
-	],
 	"env": {
-		"cjs": {
+		"node": {
 			"presets": [
-				["es2015", { "modules": false }],
 				"stage-0",
+			],
+			"plugins": [
+				["transform-es2015-destructuring", { "loose": false }],
+				["transform-es2015-modules-commonjs", { "loose": false }],
+				"transform-es2015-parameters",
+				["import-redirect", {
+					"redirect": {
+						"fetch.js$": "node-fetch",
+					},
+				}],
+			],
+		},
+		"browser": {
+			"presets": [
+				"stage-0",
+				["es2015", { "loose": true }],
 			],
 			"plugins": [
 				"add-module-exports",

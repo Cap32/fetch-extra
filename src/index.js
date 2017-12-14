@@ -174,7 +174,8 @@ assign(RequestExtra.prototype, {
 	},
 	_cloneTransformers(transformers) {
 		TransformerHooks.forEach((hook) => {
-			this.transformers[hook].push(...transformers[hook]);
+			const list = this.transformers[hook];
+			list.push.apply(list, transformers[hook]);
 		});
 	},
 	set(maybeKey, val) {

@@ -60,11 +60,11 @@ module.exports = {
 	'globals': {
 		'__DEV__': true,
 	},
-	settings: {
-		'import/resolver': {
-			webpack: {
-				config: 'webpack.config.babel.js'
-			},
-		},
-	},
+	// settings: {
+	// 	'import/resolver': {
+	// 		webpack: {
+	// 			config: 'webpack.config.babel.js'
+	// 		},
+	// 	},
+	// },
 };

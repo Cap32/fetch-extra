@@ -35,13 +35,12 @@ module.exports = (config) => {
 			module: {
 				rules: [
 					{
-						test: /\.jsx?$/,
-						// include: [srcDir, testDir],
+						test: /\.js?$/,
 						loader: 'babel-loader',
 						options: {
 							presets: [
-								['es2015', { modules: false }],
 								'stage-0',
+								'es2015',
 							],
 							cacheDirectory: true,
 							babelrc: false,
@@ -49,11 +48,6 @@ module.exports = (config) => {
 					},
 				],
 			},
-			resolve: {
-				alias: {
-					fetch: './fetch',
-				},
-			}
 		},
 
 		webpackMiddleware: { stats: 'errors-only' },
