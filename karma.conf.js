@@ -17,8 +17,6 @@ module.exports = (config) => {
 		// list of files / patterns to load in the browser
 		files: [
 			'browser.js',
-			// 'lib/fetch-extra-browser.js',
-			// { pattern: 'test/specs.js', watched: false }
 		],
 
 
@@ -29,41 +27,15 @@ module.exports = (config) => {
 
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-		// preprocessors: {
-		// 	'browser.js': ['webpack'],
-		// },
 		preprocessors: {
 			'browser.js': ['rollup'],
 		},
 
-		rollupPreprocessor: {
-			...build('karma'),
+		rollupPreprocessor: Object.assign(build('karma'), {
 			format: 'iife',
 			intro: 'var global = window;',
 			sourcemap: 'inline',
-		},
-
-		webpack: {
-			entry: () => ({}),
-			module: {
-				rules: [
-					{
-						test: /\.js?$/,
-						loader: 'babel-loader',
-						options: {
-							presets: [
-								'stage-0',
-								'es2015',
-							],
-							cacheDirectory: true,
-							babelrc: false,
-						},
-					},
-				],
-			},
-		},
-
-		webpackMiddleware: { stats: 'errors-only' },
+		}),
 
 
 		// test results reporter to use
