@@ -1,36 +1,38 @@
 
 import assert from 'assert';
-import { request } from '../src';
+import { request } from '../src/index.js';
 
 export default (host) => {
-	describe('request.fetch', () => {
-		it('request.fetch(url)', async () => request.fetch(`${host}/ok`));
+	describe('request.fetch', async function () {
+		it('request.fetch(url)', async function () {
+			request.fetch(`${host}/ok`);
+		});
 
-		it('response', async () => {
+		it('response', async function () {
 			const response = await request.fetch(`${host}/ok`);
 			const json = await response.json();
 			assert.deepEqual(json, { method: 'GET' });
 		});
 
-		it('method: POST', async () => {
+		it('method: POST', async function () {
 			const res = await request.fetch(`${host}/ok`, { method: 'POST' });
 			const json = await res.json();
 			assert.deepEqual(json, { method: 'POST' });
 		});
 
-		it('method: PUT', async () => {
+		it('method: PUT', async function () {
 			const res = await request.fetch(`${host}/ok`, { method: 'PUT' });
 			const json = await res.json();
 			assert.deepEqual(json, { method: 'PUT' });
 		});
 
-		it('method: PATCH', async () => {
+		it('method: PATCH', async function () {
 			const res = await request.fetch(`${host}/ok`, { method: 'PATCH' });
 			const json = await res.json();
 			assert.deepEqual(json, { method: 'PATCH' });
 		});
 
-		it('method: DELETE', async () => {
+		it('method: DELETE', async function () {
 			const res = await request.fetch(`${host}/ok`, { method: 'DELETE' });
 			const json = await res.json();
 			assert.deepEqual(json, { method: 'DELETE' });
@@ -38,35 +40,35 @@ export default (host) => {
 	});
 
 	describe('responseType', function () {
-		it('responseType: json', async () => {
+		it('responseType: json', async function () {
 			const body = await request.fetch(`${host}/ok`, { responseType: 'json' });
 			assert.deepEqual(body, { method: 'GET' });
 		});
 
-		it('responseType: text', async () => {
+		it('responseType: text', async function () {
 			const body = await request.fetch(`${host}/text`, { responseType: 'text' });
 			assert(body === 'ok');
 		});
 
-		it('should not handle response while response.ok is false', async () => {
+		it('should not handle response while response.ok is false', async function () {
 			const body = await request.fetch(`${host}/404`, { responseType: 'text' });
 			assert(body !== 'ok');
 		});
 	});
 
 	describe('client constructor', function () {
-		it('constructor()', async () => {
+		it('constructor()', async function () {
 			const client = request();
 			assert(client instanceof request);
 		});
 
-		it('constructor() with url', async () => {
+		it('constructor() with url', async function () {
 			const client = request(`${host}/ok`);
 			const { url } = client.req;
 			assert(url[0] === `${host}/ok`);
 		});
 
-		it('constructor() with options', async () => {
+		it('constructor() with options', async function () {
 			const client = request({ url: `${host}/ok`, responseType: 'json', method: 'PUT' });
 			const { url, method, responseType } = client.req;
 			assert(url[0] === `${host}/ok`);
@@ -74,7 +76,7 @@ export default (host) => {
 			assert(responseType === 'json');
 		});
 
-		it('constructor() with url and options', async () => {
+		it('constructor() with url and options', async function () {
 			const client = request(`${host}/ok`, { responseType: 'json', method: 'PUT' });
 			const { url, method, responseType } = client.req;
 			assert(url[0] === `${host}/ok`);
@@ -82,7 +84,7 @@ export default (host) => {
 			assert(responseType === 'json');
 		});
 
-		it('constructor() with another client', async () => {
+		it('constructor() with another client', async function () {
 			const baseClient = request({ responseType: 'json', method: 'PUT' });
 			const client = request(baseClient);
 			const { method, responseType } = client.req;
@@ -90,7 +92,7 @@ export default (host) => {
 			assert(responseType === 'json');
 		});
 
-		it('constructor() with options override', async () => {
+		it('constructor() with options override', async function () {
 			const baseClient = request({ responseType: 'json', method: 'PUT' });
 			const client = request({ method: 'POST' }, baseClient);
 			const { method } = client.req;
@@ -99,7 +101,7 @@ export default (host) => {
 	});
 
 	describe('client props', function () {
-		it('client.req', async () => {
+		it('client.req', async function () {
 			const client = request();
 			const { url, query, body, headers, method } = client.req;
 			assert(method === 'GET');
@@ -109,7 +111,7 @@ export default (host) => {
 			assert(Array.isArray(url));
 		});
 
-		it('client.compose()', async () => {
+		it('client.compose()', async function () {
 			const url = `${host}/ok`;
 			const method = 'POST';
 			const query = { hello: 'world' };
@@ -119,19 +121,19 @@ export default (host) => {
 			assert(options.url === `${url}?hello=world`);
 		});
 
-		it('client.fetch()', async () => {
+		it('client.fetch()', async function () {
 			const client = request(`${host}/ok`, { responseType: 'json', method: 'POST' });
 			const body = await client.fetch();
 			assert.deepEqual(body, { method: 'POST' });
 		});
 
-		it('client.fetch() options override original options', async () => {
+		it('client.fetch() options override original options', async function () {
 			const client = request(`${host}/ok`, { responseType: 'json', method: 'GET' });
 			const body = await client.fetch({ method: 'POST' });
 			assert.deepEqual(body, { method: 'POST' });
 		});
 
-		it('client.fetch() multiple times', async () => {
+		it('client.fetch() multiple times', async function () {
 			const client = request(`${host}/ok`, { responseType: 'json', method: 'GET' });
 			const body1 = await client.fetch({ method: 'POST' });
 			assert.deepEqual(body1, { method: 'POST' });
@@ -139,26 +141,26 @@ export default (host) => {
 			assert.deepEqual(body2, { method: 'GET' });
 		});
 
-		it('client.set() with key and value', async () => {
+		it('client.set() with key and value', async function () {
 			const client = request().set('method', 'POST');
 			const { method } = client.req;
 			assert(method === 'POST');
 		});
 
-		it('client.set() with object', async () => {
+		it('client.set() with object', async function () {
 			const client = request().set({ method: 'POST' });
 			const { method } = client.req;
 			assert(method === 'POST');
 		});
 
-		it('client.set() with another client', async () => {
+		it('client.set() with another client', async function () {
 			const baseClient = request({ method: 'POST' });
 			const client = request().set(baseClient);
 			const { method } = client.req;
 			assert(method === 'POST');
 		});
 
-		it('client.clone()', async () => {
+		it('client.clone()', async function () {
 			const client = request({ method: 'POST' });
 			const cloned = client.clone();
 			assert(cloned instanceof request);
@@ -169,20 +171,20 @@ export default (host) => {
 	});
 
 	describe('url', function () {
-		it('url string', async () => {
+		it('url string', async function () {
 			const url = `${host}/foo/bar`;
 			const client = request({ url });
 			const composed = await client.compose();
 			assert(composed.url === url);
 		});
 
-		it('extends url', async () => {
+		it('extends url', async function () {
 			const client = request({ url: host }).set('url', '/foo/bar');
 			const composed = await client.compose();
 			assert(composed.url === `${host}/foo/bar`);
 		});
 
-		it('override url', async () => {
+		it('override url', async function () {
 			const client = request({ url: 'http://google.com' })
 				.set('url', host)
 				.set('url', '/foo/bar')
@@ -191,7 +193,7 @@ export default (host) => {
 			assert(composed.url === `${host}/foo/bar`);
 		});
 
-		it('resolve url', async () => {
+		it('resolve url', async function () {
 			const client = request({ url: host })
 				.set('url', '/foo/bar/')
 				.set('url', '../baz')
@@ -200,7 +202,7 @@ export default (host) => {
 			assert(composed.url === `${host}/foo/baz`);
 		});
 
-		it('modify url', async () => {
+		it('modify url', async function () {
 			const client = request({ url: host })
 				.set('url', (urls) => urls.concat('/foo/bar'))
 			;
@@ -212,21 +214,21 @@ export default (host) => {
 	describe('query', function () {
 		const url = 'http://localhost';
 
-		it('query object', async () => {
+		it('query object', async function () {
 			const client = request(url, { query: { hello: 'world' } });
 			const composed = await client.compose();
 			const composedUrl = composed.url;
 			assert(composedUrl === `${url}?hello=world`);
 		});
 
-		it('query string', async () => {
+		it('query string', async function () {
 			const client = request(url, { query: 'hello=world' });
 			const composed = await client.compose();
 			const composedUrl = composed.url;
 			assert(composedUrl === `${url}?hello=world`);
 		});
 
-		it('query mixed', async () => {
+		it('query mixed', async function () {
 			const client = request(url, { query: 'hello=world' })
 				.set('query', { it: 'works' })
 			;
@@ -238,7 +240,7 @@ export default (host) => {
 			);
 		});
 
-		it('modify query', async () => {
+		it('modify query', async function () {
 			const client = request(url, { query: 'hello=world' })
 				.set('query', () => [{ hello: 'chris' }])
 			;
@@ -251,14 +253,14 @@ export default (host) => {
 	describe('headers', function () {
 		const url = 'http://localhost';
 
-		it('headers', async () => {
+		it('headers', async function () {
 			const client = request(url, { headers: { hello: 'world' } });
 			const composed = await client.compose();
 			const { headers } = composed;
 			assert.deepEqual(headers, { hello: 'world' });
 		});
 
-		it('extends headers', async () => {
+		it('extends headers', async function () {
 			const client = request(url, { headers: { hello: 'world' } })
 				.set('headers', { it: 'works' })
 			;
@@ -267,7 +269,7 @@ export default (host) => {
 			assert.deepEqual(headers, { hello: 'world', it: 'works' });
 		});
 
-		it('override headers', async () => {
+		it('override headers', async function () {
 			const client = request(url, { headers: { hello: 'world' } })
 				.set('headers', { hello: 'chris' })
 			;
@@ -276,7 +278,7 @@ export default (host) => {
 			assert.deepEqual(headers, { hello: 'chris' });
 		});
 
-		it('modify headers', async () => {
+		it('modify headers', async function () {
 			const client = request(url, { headers: { hello: 'world' } })
 				.set('headers', (headers) => {
 					headers.hello = 'chris';
@@ -289,7 +291,7 @@ export default (host) => {
 			assert.deepEqual(headers, { hello: 'chris', it: 'works' });
 		});
 
-		it('headers with type: json', async () => {
+		it('headers with type: json', async function () {
 			const client = request(url, { headers: { hello: 'world' }, type: 'json' });
 			const composed = await client.compose();
 			const { headers } = composed;
@@ -299,7 +301,7 @@ export default (host) => {
 			});
 		});
 
-		it('headers with type: form', async () => {
+		it('headers with type: form', async function () {
 			const client = request(url, { headers: { hello: 'world' }, type: 'form' });
 			const composed = await client.compose();
 			const { headers } = composed;
@@ -314,7 +316,7 @@ export default (host) => {
 		const url = 'http://localhost';
 		const method = 'POST';
 
-		it('body', async () => {
+		it('body', async function () {
 			const client = request({
 				url,
 				method,
@@ -325,7 +327,7 @@ export default (host) => {
 			assert.deepEqual(body, { hello: 'world' });
 		});
 
-		it('extends body', async () => {
+		it('extends body', async function () {
 			const client = request({
 				url,
 				method,
@@ -336,7 +338,7 @@ export default (host) => {
 			assert.deepEqual(body, { hello: 'world', it: 'works' });
 		});
 
-		it('override body', async () => {
+		it('override body', async function () {
 			const client = request({
 				url,
 				method,
@@ -347,7 +349,7 @@ export default (host) => {
 			assert.deepEqual(body, { hello: 'chris' });
 		});
 
-		it('modify body', async () => {
+		it('modify body', async function () {
 			const client = request({
 				url,
 				method,
@@ -362,7 +364,7 @@ export default (host) => {
 			assert.deepEqual(body, { hello: 'chris', it: 'works' });
 		});
 
-		it('body with type: json', async () => {
+		it('body with type: json', async function () {
 			const client = request({
 				url,
 				method,
@@ -374,7 +376,7 @@ export default (host) => {
 			assert(body === JSON.stringify({ hello: 'world' }));
 		});
 
-		it('body with type: form', async () => {
+		it('body with type: form', async function () {
 			const client = request({
 				url,
 				method,
@@ -388,7 +390,7 @@ export default (host) => {
 	});
 
 	describe('timeout', function () {
-		it('should timeout', async () => {
+		it('should timeout', async function () {
 			return request
 				.fetch(`${host}/delay`, { timeout: 1 })
 				.then(() => assert(false))
@@ -398,7 +400,7 @@ export default (host) => {
 	});
 
 	describe('error', function () {
-		it('should throw error if missing url', async () => {
+		it('should throw error if missing url', async function () {
 			return request
 				.fetch()
 				.then(() => assert(false))
@@ -406,7 +408,7 @@ export default (host) => {
 			;
 		});
 
-		it('should throw error if fetch failed', async () => {
+		it('should throw error if fetch failed', async function () {
 			return request
 				.fetch('http://localhost:1')
 				.then(() => assert(false))
@@ -415,7 +417,7 @@ export default (host) => {
 			;
 		});
 
-		it('should throw error if transformer failed', async () => {
+		it('should throw error if transformer failed', async function () {
 			const message = 'Failed to transform url';
 			return request
 				.fetch({
@@ -427,7 +429,7 @@ export default (host) => {
 			;
 		});
 
-		it('should throw error if `simple: true` and `response.ok: false`', async () => {
+		it('should throw error if `simple: true` and `response.ok: false`', async function () {
 			return request
 				.fetch(`${host}/404`, { simple: true })
 				.then(() => assert(false))
@@ -435,7 +437,7 @@ export default (host) => {
 			;
 		});
 
-		it('should contain a reponse object if fetch failed', async () => {
+		it('should contain a reponse object if fetch failed', async function () {
 			return request
 				.fetch(`${host}/404`, { simple: true })
 				.then(() => assert(false))
@@ -447,7 +449,7 @@ export default (host) => {
 	describe('transformers', function () {
 
 		describe('url transformer', function () {
-			it('urlTransformer option', async () => {
+			it('urlTransformer option', async function () {
 				const client = request({
 					url: `${host}/foo/bar`,
 					urlTransformer: (url) => url + '/baz',
@@ -456,7 +458,7 @@ export default (host) => {
 				assert(composed.url === `${host}/foo/bar/baz`);
 			});
 
-			it('addUrlTransformer', async () => {
+			it('addUrlTransformer', async function () {
 				const client = request({ url: `${host}/foo/bar` });
 				client.addUrlTransformer((url) => url + '/baz');
 				const composed = await client.compose();
@@ -465,7 +467,7 @@ export default (host) => {
 		});
 
 		describe('query transformer', function () {
-			it('queryTransformer option', async () => {
+			it('queryTransformer option', async function () {
 				const client = request(host, {
 					query: { foo: 'bar' },
 					queryTransformer: (query) => Object.assign(query, { baz: 'qux' }),
@@ -474,7 +476,7 @@ export default (host) => {
 				assert(composed.url === `${host}?foo=bar&baz=qux`);
 			});
 
-			it('addUrlTransformer', async () => {
+			it('addUrlTransformer', async function () {
 				const client = request(host, { query: { foo: 'bar' } });
 				client.addQueryTransformer((query) => Object.assign(query, { baz: 'qux' }));
 				const composed = await client.compose();
@@ -483,7 +485,7 @@ export default (host) => {
 		});
 
 		describe('body transformer', function () {
-			it('bodyTransformer option', async () => {
+			it('bodyTransformer option', async function () {
 				const client = request({
 					url: 'http://localhost',
 					method: 'POST',
@@ -494,7 +496,7 @@ export default (host) => {
 				assert.deepEqual(composed.body, { hello: 'world', it: 'works' });
 			});
 
-			it('addBodyTransformer', async () => {
+			it('addBodyTransformer', async function () {
 				const client = request({
 					url: 'http://localhost',
 					method: 'POST',
@@ -509,7 +511,7 @@ export default (host) => {
 		});
 
 		describe('headers transformer', function () {
-			it('headersTransformer option', async () => {
+			it('headersTransformer option', async function () {
 				const client = request({
 					url: 'http://localhost',
 					headers: { hello: 'world' },
@@ -519,7 +521,7 @@ export default (host) => {
 				assert.deepEqual(composed.headers, { hello: 'world', it: 'works' });
 			});
 
-			it('addHeadersTransformer', async () => {
+			it('addHeadersTransformer', async function () {
 				const client = request('http://localhost', { headers: { hello: 'world' } });
 				client.addHeadersTransformer((headers) => Object.assign(headers, {
 					it: 'works',
@@ -530,7 +532,7 @@ export default (host) => {
 		});
 
 		describe('error transformer', function () {
-			it('errorTransformer option', async () => {
+			it('errorTransformer option', async function () {
 				const client = request({
 					url: 'http://localhost:1',
 					errorTransformer: (err) => Object.assign(err, { name: 404 }),
@@ -542,7 +544,7 @@ export default (host) => {
 				;
 			});
 
-			it('addErrorTransformer', async () => {
+			it('addErrorTransformer', async function () {
 				const client = request('http://localhost:1');
 				client.addErrorTransformer((err) => Object.assign(err, { name: 404 }));
 				return client
@@ -554,7 +556,7 @@ export default (host) => {
 		});
 
 		describe('response transformer', function () {
-			it('responseTransformer option', async () => {
+			it('responseTransformer option', async function () {
 				const client = await request({
 					url: `${host}/ok`,
 					responseTransformer: (res) => Object.assign(res, { foo: 'bar' }),
@@ -563,7 +565,7 @@ export default (host) => {
 				assert(res.foo === 'bar');
 			});
 
-			it('addResponseTransformer', async () => {
+			it('addResponseTransformer', async function () {
 				const client = await request(`${host}/ok`);
 				client.addResponseTransformer(
 					(res) => Object.assign(res, { foo: 'bar' }),
@@ -574,7 +576,7 @@ export default (host) => {
 		});
 
 		describe('responseData transformer', function () {
-			it('responseDataTransformer option', async () => {
+			it('responseDataTransformer option', async function () {
 				const client = await request({
 					url: `${host}/ok`,
 					responseType: 'json',
@@ -584,7 +586,7 @@ export default (host) => {
 				assert.deepEqual(json, { foo: 'bar', method: 'GET' });
 			});
 
-			it('addResponseDataTransformer', async () => {
+			it('addResponseDataTransformer', async function () {
 				const client = await request(`${host}/ok`, { responseType: 'json' });
 				client.addResponseDataTransformer((json) => Object.assign(json, { foo: 'bar' }));
 				const json = await client.fetch();
@@ -593,7 +595,7 @@ export default (host) => {
 		});
 
 		describe('transformer behaviours', function () {
-			it('add multiple transformers', async () => {
+			it('add multiple transformers', async function () {
 				const client = request({ url: `${host}/foo/bar` });
 				client.addUrlTransformer((url) => url + '/baz');
 				client.addUrlTransformer((url) => url.replace('foo', 'qux'));
@@ -601,7 +603,7 @@ export default (host) => {
 				assert(composed.url === `${host}/qux/bar/baz`);
 			});
 
-			it('remove transformer', async () => {
+			it('remove transformer', async function () {
 				const client = request({ url: `${host}/foo/bar` });
 				const urlTransformer = (url) => url + '/baz';
 				client.addUrlTransformer(urlTransformer);
@@ -611,7 +613,7 @@ export default (host) => {
 				assert(composed.url === `${host}/qux/bar`);
 			});
 
-			it('transformers should be able to inherit', async () => {
+			it('transformers should be able to inherit', async function () {
 				const baseClient = request({ url: `${host}/foo/bar` });
 				baseClient.addUrlTransformer((url) => url + '/baz');
 				const client = request(baseClient);
@@ -620,7 +622,7 @@ export default (host) => {
 				assert(composed.url === `${host}/qux/bar/baz`);
 			});
 
-			it('transformers should be isolated', async () => {
+			it('transformers should be isolated', async function () {
 				const baseClient = request({ url: `${host}/foo/bar` });
 				const urlTransformer = (url) => url + '/baz';
 				baseClient.addUrlTransformer(urlTransformer);

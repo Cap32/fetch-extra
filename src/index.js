@@ -1,6 +1,6 @@
 
+import fetch from 'node-fetch';
 import * as qs from 'tiny-querystring';
-import fetch from './fetch';
 
 const { assign } = Object;
 const isString = (target) => typeof target === 'string';

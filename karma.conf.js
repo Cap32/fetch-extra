@@ -1,5 +1,7 @@
 /* eslint-disable max-len */
 
+const build = require('./build');
+
 module.exports = (config) => {
 	const configuration = {
 
@@ -15,6 +17,8 @@ module.exports = (config) => {
 		// list of files / patterns to load in the browser
 		files: [
 			'browser.js',
+			// 'lib/fetch-extra-browser.js',
+			// { pattern: 'test/specs.js', watched: false }
 		],
 
 
@@ -25,10 +29,19 @@ module.exports = (config) => {
 
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
+		// preprocessors: {
+		// 	'browser.js': ['webpack'],
+		// },
 		preprocessors: {
-			'browser.js': ['webpack'],
+			'browser.js': ['rollup'],
 		},
 
+		rollupPreprocessor: {
+			...build('karma'),
+			format: 'iife',
+			intro: 'var global = window;',
+			sourcemap: 'inline',
+		},
 
 		webpack: {
 			entry: () => ({}),
