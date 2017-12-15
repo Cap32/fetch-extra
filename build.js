@@ -6,6 +6,7 @@ const alias = require('rollup-plugin-alias');
 const json = require('rollup-plugin-json');
 const commonjs = require('rollup-plugin-commonjs');
 const uglify = require('rollup-plugin-uglify');
+const filesize = require('rollup-plugin-filesize');
 const builtins = require('rollup-plugin-node-builtins');
 const pkg = require('./package.json');
 
@@ -32,6 +33,7 @@ const presets = {
 		plugins: [
 			alias({ 'node-fetch': './fetch' }),
 			uglify({ output: { comments: false } }),
+			filesize(),
 		],
 	},
 	karma: {
