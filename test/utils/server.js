@@ -4,7 +4,6 @@ import url from 'url';
 import bodyParser from 'co-body';
 import qs from 'qs';
 import cors from 'cors';
-
 import delay from 'delay';
 
 export const server = http.createServer((req, res) => {
