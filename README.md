@@ -18,11 +18,12 @@ Extra features for whatwg fetch and Request, including:
 
 - [Installation](#installation)
 - [fetchExtra](#fetchextra)
-    - [The same usage with fetch:](#the-same-usage-with-fetch)
+    - [The same usage with fetch](#the-same-usage-with-fetch)
     - [Extra options](#extra-options)
 - [RequestExtra](#requestextra)
-    - [The same usage with Request:](#the-same-usage-with-request)
+    - [The same usage with Request](#the-same-usage-with-request)
     - [New `Request#fetch()` method](#new-requestfetch-method)
+    - [New `resolveType` option](#new-resolvetype-option)
     - [Composing URL](#composing-url)
     - [Enhanced `Request#clone()` method](#enhanced-requestclone-method)
     - [New `query` option](#new-query-option)
@@ -54,7 +55,7 @@ $ yarn add fetch-extra
 ## fetchExtra
 
 <a name="the-same-usage-with-fetch"></a>
-#### The same usage with [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API):
+#### The same usage with [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
 
 ```js
 import { fetchExtra } from 'fetch-extra';
@@ -69,11 +70,11 @@ import { fetchExtra } from 'fetch-extra';
 <a name="extra-options"></a>
 #### Extra options
 
-###### resolveType: json
-
 ```js
-const luke = await fetchExtra(url, { resolveType: 'json' });
-console.log(luke.name); /* Luke Skywalker */
+const res = await fetchExtra(url, {
+    resolveType: 'json',
+    timeout: 30000,
+});
 ```
 
 For more extra options, please checkout the API References.
@@ -85,7 +86,7 @@ For more extra options, please checkout the API References.
 > The Request interface of the Fetch API represents a resource request.
 
 <a name="the-same-usage-with-request"></a>
-#### The same usage with [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request):
+#### The same usage with [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request)
 
 ```js
 import { fetchExtra, RequestExtra } from 'fetch-extra';
@@ -101,15 +102,26 @@ import { fetchExtra, RequestExtra } from 'fetch-extra';
 #### New `Request#fetch()` method
 
 ```js
-const request = new RequestExtra(url, { resolveType: 'json' });
-const luke = await request.fetch();
+const request = new RequestExtra(url);
+const res = await request.fetch();
+const luke = await res.json();
 ```
 
 ###### with fetching options
 
 ```js
+const request = new RequestExtra(url);
+const res = await request.fetch({ method: 'DELETE' });
+const luke = await res.json();
+```
+
+<a name="new-resolvetype-option"></a>
+#### New `resolveType` option
+
+```js
 const request = new RequestExtra(url, { resolveType: 'json' });
-const luke = await request.fetch({ method: 'DELETE' });
+const luke = await request.fetch(); /* <-- no need `await res.json()` */
+console.log(luke.name); /* Luke Skywalker */
 ```
 
 
