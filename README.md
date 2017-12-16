@@ -19,13 +19,16 @@ Extra features for whatwg fetch and Request, including:
 - [Installation](#installation)
 - [fetchExtra](#fetchextra)
     - [The same usage with fetch:](#the-same-usage-with-fetch)
-    - [New `resolveType` option:](#new-resolvetype-option)
+    - [Extra options](#extra-options)
 - [RequestExtra](#requestextra)
     - [The same usage with Request:](#the-same-usage-with-request)
     - [New `Request#fetch()` method](#new-requestfetch-method)
-    - [New `Query` option](#new-query-option)
     - [Composing URL](#composing-url)
     - [Enhanced `Request#clone()` method](#enhanced-requestclone-method)
+    - [New `query` option](#new-query-option)
+    - [Enhanced `body` option](#enhanced-body-option)
+    - [New `type` option](#new-type-option)
+    - [Transformers](#transformers)
 - [API References](#api-references)
 - [License](#license)
 
@@ -63,13 +66,18 @@ import { fetchExtra } from 'fetch-extra';
 }());
 ```
 
-<a name="new-resolvetype-option"></a>
-#### New `resolveType` option:
+<a name="extra-options"></a>
+#### Extra options
+
+###### resolveType: json
 
 ```js
 const luke = await fetchExtra(url, { resolveType: 'json' });
 console.log(luke.name); /* Luke Skywalker */
 ```
+
+For more extra options, please checkout the API References.
+
 
 <a name="requestextra"></a>
 ## RequestExtra
@@ -105,17 +113,6 @@ const luke = await request.fetch({ method: 'DELETE' });
 ```
 
 
-<a name="new-query-option"></a>
-#### New `Query` option
-
-```js
-const url = 'https://swapi.co/api/people';
-const request = new RequestExtra(url, { resolveType: 'json' });
-const results = await request.fetch({ query: { search: 'luke' } });
-/* final URL will be "https://swapi.co/api/people?search=luke" */
-```
-
-
 <a name="composing-url"></a>
 #### Composing URL
 
@@ -143,6 +140,48 @@ const luke = await swRequest.fetch('/people/1/');
 const pokeRequest = baseRequest.clone('https://pokeapi.co/api/v2/');
 const bulbasaur = await pokeRequest.fetch('/pokemon/1/');
 ```
+
+
+<a name="new-query-option"></a>
+#### New `query` option
+
+```js
+const results = await swRequest.fetch({ query: { search: 'luke' } });
+/* final URL will be "https://swapi.co/api/people?search=luke" */
+```
+
+
+<a name="enhanced-body-option"></a>
+#### Enhanced `body` option
+
+```js
+const results = await swRequest.fetch({
+    method: 'POST',
+    body: { name: 'Luke Skywalker' },
+});
+/* final body will be '{"name":"Luke Skywalker"}' */
+```
+
+
+<a name="new-type-option"></a>
+#### New `type` option
+
+```js
+const results = await swRequest.fetch({
+    method: 'POST',
+    type: 'form'
+    body: { name: 'Luke Skywalker' },
+});
+/* final body will be 'name=Luke%20Skywalker' */
+/* final header['Content-Type'] will be 'application/x-www-form-urlencoded' */
+```
+
+
+<a name="transformers"></a>
+#### Transformers
+
+*TODO*
+
 
 <a name="api-references"></a>
 ## API References
