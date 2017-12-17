@@ -1,5 +1,8 @@
 # fetch-extra
 
+[![Build Status](https://travis-ci.org/Cap32/fetch-extra.svg?branch=master)](https://travis-ci.org/Cap32/fetch-extra)
+[![License](https://img.shields.io/badge/license-MIT_License-green.svg?style=flat)](https://github.com/Cap32/fetch-extra/blob/master/LICENSE)
+
 Extra features for whatwg fetch and Request, including:
 
 - Added query option
