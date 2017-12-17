@@ -1,7 +1,8 @@
 # fetch-extra
 
 [![Build Status](https://travis-ci.org/Cap32/fetch-extra.svg?branch=master)](https://travis-ci.org/Cap32/fetch-extra)
-[![License](https://img.shields.io/badge/license-MIT_License-green.svg?style=flat)](https://github.com/Cap32/fetch-extra/blob/master/LICENSE)
+[![Coverage Status](https://coveralls.io/repos/github/Cap32/fetch-extra/badge.svg?branch=master)](https://coveralls.io/github/Cap32/fetch-extra?branch=master)
+[![License](https://img.shields.io/badge/license-MIT_License-blue.svg?style=flat)](https://github.com/Cap32/fetch-extra/blob/master/LICENSE)
 
 Extra features for whatwg fetch and Request, including:
 
@@ -74,13 +75,16 @@ import { fetchExtra } from 'fetch-extra';
 #### Extra options
 
 ```js
-const res = await fetchExtra(url, {
+const res = await fetchExtra({
+    url: 'https://swapi.co/api/people/1/',
     resolveType: 'json',
     timeout: 30000,
 });
 ```
 
 For more extra options, please checkout the API References.
+
+
 
 
 <a name="requestextra"></a>
@@ -95,7 +99,7 @@ For more extra options, please checkout the API References.
 import { fetchExtra, RequestExtra } from 'fetch-extra';
 (async function main() {
     const url = 'https://swapi.co/api/people/1/';
-    const request = RequestExtra(url);
+    const request = new RequestExtra(url, { method: 'DELETE' });
     const res = await fetchExtra(request);
     const luke = await res.json();
 }());
@@ -151,6 +155,7 @@ const baseRequest = new RequestExtra({ resolveType: 'json' });
 
 const swRequest = baseRequest.clone('https://swapi.co/api/');
 const luke = await swRequest.fetch('/people/1/');
+const c3po = await swRequest.fetch('/people/2/');
 
 const pokeRequest = baseRequest.clone('https://pokeapi.co/api/v2/');
 const bulbasaur = await pokeRequest.fetch('/pokemon/1/');

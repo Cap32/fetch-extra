@@ -14,6 +14,7 @@
     "test:browser": "cross-env BABEL_ENV=node babel-node test/utils/karma.js",
     "test:node": "cross-env BABEL_ENV=node nyc --reporter=lcov --reporter=text mocha --require=babel-register --delay test/node.js",
     "test": "run-s test:*",
+    "coverage": "cat ./coverage/lcov.info | coveralls",
     "prepublish": "run-s test build"
   },
   "main": "lib/fetch-extra-node.js",
@@ -46,6 +47,7 @@
     "babel-plugin-transform-es2015-parameters": "^6.24.1",
     "co-body": "^4.2.0",
     "cors": "^2.8.1",
+    "coveralls": "^3.0.0",
     "cross-env": "^3.1.3",
     "delay": "^2.0.0",
     "eslint": "^4.12.1",
@@ -76,5 +78,8 @@
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-uglify": "^2.0.1"
+  },
+  "nyc": {
+    "temp-directory": "./coverage/.nyc_output"
   }
 }

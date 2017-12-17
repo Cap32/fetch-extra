@@ -10,3 +10,5 @@ before_install:
 notifications:
   email: false
 
+after_script:
+  - yarn coverage
