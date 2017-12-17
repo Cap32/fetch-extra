@@ -141,25 +141,6 @@ export default (host) => {
 			assert.deepEqual(body2, { method: 'GET' });
 		});
 
-		it('client.set() with key and value', async function () {
-			const client = request().set('method', 'POST');
-			const { method } = client.req;
-			assert(method === 'POST');
-		});
-
-		it('client.set() with object', async function () {
-			const client = request().set({ method: 'POST' });
-			const { method } = client.req;
-			assert(method === 'POST');
-		});
-
-		it('client.set() with another client', async function () {
-			const baseClient = request({ method: 'POST' });
-			const client = request().set(baseClient);
-			const { method } = client.req;
-			assert(method === 'POST');
-		});
-
 		it('client.clone()', async function () {
 			const client = request({ method: 'POST' });
 			const cloned = client.clone();
@@ -170,9 +151,56 @@ export default (host) => {
 		});
 	});
 
+	describe('client.set', function () {
+		it('client.set() with key and value', function () {
+			const client = request().set('method', 'POST');
+			const { method } = client.req;
+			assert(method === 'POST');
+		});
+
+		it('client.set() with object', function () {
+			const client = request().set({ method: 'POST' });
+			const { method } = client.req;
+			assert(method === 'POST');
+		});
+
+		it('client.set() with function', function () {
+			const client = request({
+				method: 'POST',
+			}).set((req) => {
+				assert(req.method === 'POST');
+				req.method = 'PUT';
+				return req;
+			});
+			const { method } = client.req;
+			assert(method === 'PUT');
+		});
+
+		it('client.set() with another client', function () {
+			const baseClient = request({ method: 'POST' });
+			const client = request().set(baseClient);
+			const { method } = client.req;
+			assert(method === 'POST');
+		});
+
+		it('throw error is client.set() with invalid key', function () {
+			assert.throws(() => {
+				const baseClient = request();
+				const client = request().set();
+			});
+		});
+	});
+
 	describe('url', function () {
 		it('url string', async function () {
 			const url = `${host}/foo/bar`;
+			const client = request({ url });
+			const composed = await client.compose();
+			assert(composed.url === url);
+		});
+
+		it('url string ends with slash', async function () {
+			const url = `${host}/foo/bar/`;
 			const client = request({ url });
 			const composed = await client.compose();
 			assert(composed.url === url);
@@ -248,6 +276,15 @@ export default (host) => {
 			const composedUrl = composed.url;
 			assert(composedUrl === `${url}?hello=chris`);
 		});
+
+		it('extends url search', async function () {
+			const client = request(`${url}?foo=bar`, { query: 'hello=world' })
+				.set('query', () => [{ hello: 'chris' }])
+			;
+			const composed = await client.compose();
+			const composedUrl = composed.url;
+			assert(composedUrl === `${url}?foo=bar&hello=chris`);
+		});
 	});
 
 	describe('headers', function () {
@@ -309,6 +346,13 @@ export default (host) => {
 				hello: 'world',
 				'Content-Type': 'application/x-www-form-urlencoded',
 			});
+		});
+
+		it('headers with custom type', async function () {
+			const client = request(url, { type: 'foo' });
+			const composed = await client.compose();
+			const { headers } = composed;
+			assert.deepEqual(headers, { 'Content-Type': 'foo' });
 		});
 	});
 
@@ -399,6 +443,32 @@ export default (host) => {
 		});
 	});
 
+	describe('simple', function () {
+		it('should not throw error is `response.ok: true`', async function () {
+			return request
+				.fetch(`${host}/ok`, { simple: true })
+				.then(() => assert(true))
+				.catch((err) => assert(false))
+			;
+		});
+
+		it('should throw error if `response.ok: false`', async function () {
+			return request
+				.fetch(`${host}/404`, { simple: true })
+				.then(() => assert(false))
+				.catch((err) => assert(err.status === 404))
+			;
+		});
+
+		it('should contain a reponse object if fetch failed', async function () {
+			return request
+				.fetch(`${host}/404`, { simple: true })
+				.then(() => assert(false))
+				.catch((err) => assert(typeof err.response === 'object'))
+			;
+		});
+	});
+
 	describe('error', function () {
 		it('should throw error if missing url', async function () {
 			return request
@@ -426,22 +496,6 @@ export default (host) => {
 				})
 				.then(() => assert(false))
 				.catch((err) => assert(err.message === message))
-			;
-		});
-
-		it('should throw error if `simple: true` and `response.ok: false`', async function () {
-			return request
-				.fetch(`${host}/404`, { simple: true })
-				.then(() => assert(false))
-				.catch((err) => assert(err.status === 404))
-			;
-		});
-
-		it('should contain a reponse object if fetch failed', async function () {
-			return request
-				.fetch(`${host}/404`, { simple: true })
-				.then(() => assert(false))
-				.catch((err) => assert(typeof err.response === 'object'))
 			;
 		});
 	});

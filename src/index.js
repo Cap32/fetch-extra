@@ -27,7 +27,7 @@ const parseUrl = function parseUrl(url) {
 	return { path: url, queryObj: {} };
 };
 
-const checkCouldHaveBody = function checkCouldHaveBody(method = '') {
+const checkCouldHaveBody = function checkCouldHaveBody(method) {
 	return !~['GET', 'HEAD'].indexOf(method.toUpperCase());
 };
 
@@ -52,8 +52,11 @@ const resolveUrls = function resolveUrls(urls) {
 	});
 	const resolvedUrl = paths
 		.reduce((list, path) => {
+
+			/* istanbul ignore else */
 			if (path === '..' && list.length) { list.pop(); }
 			else if (path !== '.') { list.push(path); }
+
 			return list;
 		}, [])
 		.join('/')
@@ -77,6 +80,8 @@ const composeURL = function composeURL(url, queries) {
 
 const composeBody = function composeBody(body, headers) {
 	const contentType = headers['Content-Type'];
+
+	/* istanbul ignore else */
 	if (body && !isString(body)) {
 		if (contentType === ContentTypes.json) {
 			return JSON.stringify(body);
@@ -85,6 +90,7 @@ const composeBody = function composeBody(body, headers) {
 			return qs.stringify(body);
 		}
 	}
+
 	return body;
 };
 
@@ -169,7 +175,7 @@ assign(RequestExtra.prototype, {
 	_from(...args) {
 		args.forEach((arg) => {
 			if (isString(arg)) { this.set('url', arg); }
-			else if (isObject(arg)) { this.set(arg); }
+			else { this.set(arg); }
 		});
 	},
 	_cloneTransformers(transformers) {
@@ -218,6 +224,9 @@ assign(RequestExtra.prototype, {
 			const obj = maybeKey;
 			Object.keys(obj).forEach((key) => this.set(key, obj[key]));
 		}
+		else {
+			throw new Error(`Can NOT set key "${typeof maybeKey}"`);
+		}
 		return this;
 	},
 	clone(...args) {
@@ -256,7 +265,7 @@ assign(RequestExtra.prototype, {
 				return Promise.race(promises);
 			})
 			.catch((err) => {
-				if (err) { err.response = response; }
+				err.response = response;
 				return request._applyErrorTransformer(err)
 					.then((e) => Promise.reject(e));
 			})
