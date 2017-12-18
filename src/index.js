@@ -33,6 +33,9 @@ const checkCouldHaveBody = function checkCouldHaveBody(method) {
 
 const resolveUrls = function resolveUrls(urls) {
 	const paths = [];
+	const getProtocolIndex = function getProtocolIndex(url) {
+		return url.indexOf('://');
+	};
 	const separateBySlash = function separateBySlash(str) {
 		const list = str.split('/').filter((path) => path && path !== '.');
 		paths.push.apply(paths, list);
@@ -40,7 +43,7 @@ const resolveUrls = function resolveUrls(urls) {
 	urls = urls.filter(Boolean);
 	if (!urls.length) { throw new Error('Missing url'); }
 	urls.forEach((url) => {
-		const protocolIndex = url.indexOf('://');
+		const protocolIndex = getProtocolIndex(url);
 		if (protocolIndex > -1) {
 			paths.length = 0;
 			paths.push(url.substr(0, protocolIndex) + ':/');
@@ -50,7 +53,7 @@ const resolveUrls = function resolveUrls(urls) {
 			separateBySlash(url);
 		}
 	});
-	const resolvedUrl = paths
+	let resolvedUrl = paths
 		.reduce((list, path) => {
 
 			/* istanbul ignore else */
@@ -61,8 +64,12 @@ const resolveUrls = function resolveUrls(urls) {
 		}, [])
 		.join('/')
 	;
-	const isLastSlash = urls[urls.length - 1].substr(-1) === '/';
-	return isLastSlash ? (resolvedUrl + '/') : resolvedUrl;
+	const hasProtocol = ~getProtocolIndex(resolvedUrl);
+	const isStartsWithSlash = !hasProtocol && urls[0].charAt(0) === '/';
+	const isEndsWithSlash = urls[urls.length - 1].substr(-1) === '/';
+	if (isStartsWithSlash) { resolvedUrl = '/' + resolvedUrl; }
+	if (isEndsWithSlash) { resolvedUrl += '/'; }
+	return resolvedUrl;
 };
 
 const composeURL = function composeURL(url, queries) {

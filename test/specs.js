@@ -206,6 +206,14 @@ export default (host) => {
 			assert(composed.url === url);
 		});
 
+		it('url string starts with slash', async function () {
+			const url = '/foo/bar';
+			const client = request({ url });
+			const composed = await client.compose();
+			console.log('composed.url', composed.url);
+			assert(composed.url === url);
+		});
+
 		it('extends url', async function () {
 			const client = request({ url: host }).set('url', '/foo/bar');
 			const composed = await client.compose();
