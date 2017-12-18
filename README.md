@@ -18,7 +18,7 @@ Extra features for whatwg fetch and Request, including:
 - And so on...
 
 
-## Table of Content
+## Table of Contents
 <!-- MarkdownTOC -->
 
 - [Installation](#installation)
