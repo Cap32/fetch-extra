@@ -4108,9 +4108,9 @@ through@2, through@^2.3.6, through@~2.3, through@~2.3.1:
   version "2.3.8"
   resolved "http://registry.npm.taobao.org/through/download/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
 
-tiny-querystring@^0.0.1:
-  version "0.0.1"
-  resolved "http://registry.npm.taobao.org/tiny-querystring/download/tiny-querystring-0.0.1.tgz#dd04c62b25eb90d1786fbe2174235954e682b780"
+tiny-querystring@^0.0.2:
+  version "0.0.2"
+  resolved "http://registry.npm.taobao.org/tiny-querystring/download/tiny-querystring-0.0.2.tgz#a7aa2f7ba3988e2cc4c0b04752c95ba654438f60"
 
 tmp@0.0.28:
   version "0.0.28"
