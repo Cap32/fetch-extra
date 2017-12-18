@@ -1,6 +1,6 @@
 {
   "name": "fetch-extra",
-  "version": "0.0.0-4",
+  "version": "0.0.0-5",
   "description": "extra methods and props for whatwg fetch and Request",
   "repository": "Cap32/fetch-extra",
   "scripts": {
