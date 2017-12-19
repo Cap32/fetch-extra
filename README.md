@@ -23,18 +23,22 @@ Extra features for whatwg fetch and Request, including:
 
 - [Installation](#installation)
 - [fetchExtra](#fetchextra)
-    - [The same usage with fetch](#the-same-usage-with-fetch)
-    - [Extra options](#extra-options)
 - [RequestExtra](#requestextra)
-    - [The same usage with Request](#the-same-usage-with-request)
     - [New `Request#fetch()` method](#new-requestfetch-method)
-    - [New `resolveType` option](#new-resolvetype-option)
-    - [Composing URL](#composing-url)
+    - [Enhanced `url` option](#enhanced-url-option)
     - [Enhanced `Request#clone()` method](#enhanced-requestclone-method)
+    - [New `resolveType` option](#new-resolvetype-option)
     - [New `query` option](#new-query-option)
     - [Enhanced `body` option](#enhanced-body-option)
     - [New `type` option](#new-type-option)
-    - [Transformers](#transformers)
+    - [New `simple` option](#new-simple-option)
+    - [New `queryTransformer` option](#new-querytransformer-option)
+    - [New `urlTransformer` option](#new-urltransformer-option)
+    - [New `headersTransformer` option](#new-headerstransformer-option)
+    - [New `bodyTransformer` option](#new-bodytransformer-option)
+    - [New `responseTransformer` option](#new-responsetransformer-option)
+    - [New `responseDataTransformer` option](#new-responsedatatransformer-option)
+    - [New `errorTransformer` option](#new-errortransformer-option)
 - [API References](#api-references)
 - [License](#license)
 
@@ -59,21 +63,18 @@ $ yarn add fetch-extra
 <a name="fetchextra"></a>
 ## fetchExtra
 
-<a name="the-same-usage-with-fetch"></a>
-#### The same usage with [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
+By default, fetchExtra has the same usage with [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API).
 
 ```js
 import { fetchExtra } from 'fetch-extra';
 (async function main() {
     const url = 'https://swapi.co/api/people/1/';
-    const res = await fetchExtra(url);
+    const res = await fetchExtra(url, { method: 'GET' });
     const luke = await res.json();
     console.log(luke.name); /* Luke Skywalker */
 }());
 ```
-
-<a name="extra-options"></a>
-#### Extra options
+But there are some extra options.
 
 ```js
 const res = await fetchExtra({
@@ -93,18 +94,19 @@ For more extra options, please checkout the API References.
 
 > The Request interface of the Fetch API represents a resource request.
 
-<a name="the-same-usage-with-request"></a>
-#### The same usage with [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request)
+RequestExtra also has the same usage with [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request).
 
 ```js
 import { fetchExtra, RequestExtra } from 'fetch-extra';
 (async function main() {
     const url = 'https://swapi.co/api/people/1/';
-    const request = new RequestExtra(url, { method: 'DELETE' });
+    const request = new RequestExtra(url);
     const res = await fetchExtra(request);
     const luke = await res.json();
 }());
 ```
+
+But there are some extra options and methods.
 
 <a name="new-requestfetch-method"></a>
 #### New `Request#fetch()` method
@@ -123,27 +125,17 @@ const res = await request.fetch({ method: 'DELETE' });
 const luke = await res.json();
 ```
 
-<a name="new-resolvetype-option"></a>
-#### New `resolveType` option
-
-```js
-const request = new RequestExtra(url, { resolveType: 'json' });
-const luke = await request.fetch(); /* <-- no need `await res.json()` */
-console.log(luke.name); /* Luke Skywalker */
-```
-
-
-<a name="composing-url"></a>
-#### Composing URL
+<a name="enhanced-url-option"></a>
+#### Enhanced `url` option
 
 ```js
 const baseUrl = 'https://swapi.co/api/';
-const swRequest = new RequestExtra(baseUrl, { resolveType: 'json' });
+const swRequest = new RequestExtra(baseUrl);
 
-const luke = await swRequest.fetch('/people/1/');
+const lukeRes = await swRequest.fetch('/people/1/');
 /* final URL will be "https://swapi.co/api/people/1/" */
 
-const starShip = await swRequest.fetch('/starships/9/');
+const starShipRes = await swRequest.fetch('/starships/9/');
 /* final URL will be "https://swapi.co/api/starships/9/" */
 ```
 
@@ -152,7 +144,9 @@ const starShip = await swRequest.fetch('/starships/9/');
 #### Enhanced `Request#clone()` method
 
 ```js
-const baseRequest = new RequestExtra({ resolveType: 'json' });
+const baseRequest = new RequestExtra({
+    headers: { 'Content-Type': 'application/json' },
+});
 
 const swRequest = baseRequest.clone('https://swapi.co/api/');
 const luke = await swRequest.fetch('/people/1/');
@@ -160,6 +154,15 @@ const c3po = await swRequest.fetch('/people/2/');
 
 const pokeRequest = baseRequest.clone('https://pokeapi.co/api/v2/');
 const bulbasaur = await pokeRequest.fetch('/pokemon/1/');
+```
+
+<a name="new-resolvetype-option"></a>
+#### New `resolveType` option
+
+```js
+const options = { resolveType: 'json' };
+const luke = await swRequest.fetch(options); /* <-- no need `await res.json()` */
+console.log(luke.name); /* Luke Skywalker */
 ```
 
 
@@ -178,7 +181,7 @@ const results = await swRequest.fetch({ query: { search: 'luke' } });
 ```js
 const results = await swRequest.fetch({
     method: 'POST',
-    body: { name: 'Luke Skywalker' },
+    body: { name: 'Luke Skywalker' }, /* <-- could be a JSON */
 });
 /* final body will be '{"name":"Luke Skywalker"}' */
 ```
@@ -198,10 +201,122 @@ const results = await swRequest.fetch({
 ```
 
 
-<a name="transformers"></a>
-#### Transformers
+<a name="new-simple-option"></a>
+#### New `simple` option
 
-*TODO*
+```js
+try {
+    const results = await swRequest.fetch({
+        simple: true,
+        url: '/400', /* simulate response with 400 HTTP status */
+    });
+}
+catch (err) {
+    console.error(err); /* <-- Error: Bad Request  */
+}
+```
+
+<a name="new-querytransformer-option"></a>
+#### New `queryTransformer` option
+
+```js
+const baseRequest = new RequestExtra({
+    queryTransformer: (query) => { /* <-- queryTransformer */
+        query.accessToken = '<ACCESS_TOKEN>',
+        return query;
+    },
+});
+const swRequest = baseRequest.clone('https://swapi.co/api/');
+const results = await swRequest.fetch('/people', {
+    query: { search: 'luke' },
+});
+/* final URL will be "https://swapi.co/api/people?search=luke&accessToken=<ACCESS_TOKEN>" */
+```
+
+Even async / await
+
+```js
+const baseRequest = new RequestExtra({
+    async urlTransformer(url) { /* <-- queryTransformer */
+        query.accessToken = await getTokenAsync(),
+        return query;
+    },
+});
+/* ... */
+```
+
+
+<a name="new-urltransformer-option"></a>
+#### New `urlTransformer` option
+
+Like `queryTransformer`, but transform `url`.
+
+
+<a name="new-headerstransformer-option"></a>
+#### New `headersTransformer` option
+
+Like `queryTransformer`, but transform `headers`.
+
+
+<a name="new-bodytransformer-option"></a>
+#### New `bodyTransformer` option
+
+Like `queryTransformer`, but transform `body`.
+
+
+<a name="new-responsetransformer-option"></a>
+#### New `responseTransformer` option
+
+Transform [response](https://developer.mozilla.org/en-US/docs/Web/API/Response) instance.
+
+
+```js
+const baseRequest = new RequestExtra({
+    resolveType: 'json',
+    responseTransformer(response) { /* <-- responseTransformer */
+        if (response.status === 404) {
+            throw new Error('Page not found');
+        }
+        return response;
+    },
+});
+/* ... */
+```
+
+
+<a name="new-responsedatatransformer-option"></a>
+#### New `responseDataTransformer` option
+
+Like `responseTransformer`, but transform the data after `resolveType` resolved.
+
+```js
+const baseRequest = new RequestExtra({
+    resolveType: 'json',
+    responseDataTransformer(json) { /* <-- responseDataTransformer */
+        if (json) { json.fullName = `${json.firstName} ${json.familyName}`; }
+        return json;
+    },
+});
+/* ... */
+```
+
+
+<a name="new-errortransformer-option"></a>
+#### New `errorTransformer` option
+
+Transform error or rejection.
+
+```js
+const baseRequest = new RequestExtra({
+    errorTransformer(error) { /* <-- errorTransformer */
+        if (error.name === 'Abort') {
+            console.warn('Fetch aborted');
+        }
+        return error;
+    },
+});
+/* ... */
+```
 
 
 <a name="api-references"></a>
