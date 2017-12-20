@@ -71,9 +71,11 @@ $ yarn add fetch-extra
 - If `options` is a string, it is treated as a `URL`
 - If `options` is a object, it is treated as `RequestExtra` options. Checkout below for detail
 
+Later `options` will similarly overwrite earlier ones.
+
 ##### Description
 
-Later `options` will similarly overwrite earlier ones.
+> The Fetch API provides an interface for fetching resources.
 
 `fetchExtra` syntax adapts to [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API):
 
