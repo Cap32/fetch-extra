@@ -26,7 +26,7 @@ Extra features for whatwg fetch and Request, including:
 - [RequestExtra](#requestextra)
     - [New `Request#fetch()` method](#new-requestfetch-method)
     - [Enhanced `url` option](#enhanced-url-option)
-    - [Enhanced `Request#clone()` method](#enhanced-requestclone-method)
+    - [Enhanced `Request#clone(...options)` method](#enhanced-requestcloneoptions-method)
     - [New `resolveType` option](#new-resolvetype-option)
     - [New `query` option](#new-query-option)
     - [Enhanced `body` option](#enhanced-body-option)
@@ -39,7 +39,6 @@ Extra features for whatwg fetch and Request, including:
     - [New `responseTransformer` option](#new-responsetransformer-option)
     - [New `responseDataTransformer` option](#new-responsedatatransformer-option)
     - [New `errorTransformer` option](#new-errortransformer-option)
-- [API References](#api-references)
 - [License](#license)
 
 <!-- /MarkdownTOC -->
@@ -63,7 +62,20 @@ $ yarn add fetch-extra
 <a name="fetchextra"></a>
 ## fetchExtra
 
-By default, fetchExtra has the same usage with [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API).
+##### Syntax
+
+> Promise\<Response\> fetchExtra(...options)
+
+`...options` \<...String|Object|RequestExtra\>
+
+- If `options` is a string, it is treated as a `URL`
+- If `options` is a object, it is treated as `RequestExtra` options. Checkout below for detail
+
+##### Description
+
+Later `options` will similarly overwrite earlier ones.
+
+`fetchExtra` syntax adapts to [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API):
 
 ```js
 import { fetchExtra } from 'fetch-extra';
@@ -74,6 +86,7 @@ import { fetchExtra } from 'fetch-extra';
     console.log(luke.name); /* Luke Skywalker */
 }());
 ```
+
 But there are some extra options.
 
 ```js
@@ -84,17 +97,25 @@ const res = await fetchExtra({
 });
 ```
 
-For more extra options, please checkout the API References.
-
-
+For more extra options and usages, please checkout below.
 
 
 <a name="requestextra"></a>
 ## RequestExtra
 
+##### Syntax
+
+> \<RequestExtra\> new RequestExtra(...options)
+
+`...options` \<...String|Object|RequestExtra\>
+
+All options usages are the same with `fetchExtra` options.
+
+##### Description
+
 > The Request interface of the Fetch API represents a resource request.
 
-RequestExtra also has the same usage with [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request).
+RequestExtra syntax also adapts to [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request).
 
 ```js
 import { fetchExtra, RequestExtra } from 'fetch-extra';
@@ -108,6 +129,7 @@ import { fetchExtra, RequestExtra } from 'fetch-extra';
 
 But there are some extra options and methods.
 
+
 <a name="new-requestfetch-method"></a>
 #### New `Request#fetch()` method
 
@@ -117,7 +139,7 @@ const res = await request.fetch();
 const luke = await res.json();
 ```
 
-###### with fetching options
+Fetching with options:
 
 ```js
 const request = new RequestExtra(url);
@@ -127,6 +149,8 @@ const luke = await res.json();
 
 <a name="enhanced-url-option"></a>
 #### Enhanced `url` option
+
+`URLs` could be composed.
 
 ```js
 const baseUrl = 'https://swapi.co/api/';
@@ -139,9 +163,16 @@ const starShipRes = await swRequest.fetch('/starships/9/');
 /* final URL will be "https://swapi.co/api/starships/9/" */
 ```
 
+To override earlier URL, just give a new URL starts with a protocol (like `http://` or `https://`):
 
-<a name="enhanced-requestclone-method"></a>
-#### Enhanced `Request#clone()` method
+```js
+const swRequest = new RequestExtra('https://swapi.co/', options);
+const pokeRes = swRequest.fetch('https://pokeapi.co/api/v2/');
+/* final URL will be "https://pokeapi.co/api/v2/" */
+```
+
+<a name="enhanced-requestcloneoptions-method"></a>
+#### Enhanced `Request#clone(...options)` method
 
 ```js
 const baseRequest = new RequestExtra({
@@ -156,14 +187,22 @@ const pokeRequest = baseRequest.clone('https://pokeapi.co/api/v2/');
 const bulbasaur = await pokeRequest.fetch('/pokemon/1/');
 ```
 
+The `...options` usages are the same with `fetchExtra` or `RequestExtra`
+
 <a name="new-resolvetype-option"></a>
 #### New `resolveType` option
+
+Returning resolved data with specified type instead of `response` object.
 
 ```js
 const options = { resolveType: 'json' };
 const luke = await swRequest.fetch(options); /* <-- no need `await res.json()` */
 console.log(luke.name); /* Luke Skywalker */
 ```
+
+In browser, `resolveType` value could be one of `arrayBuffer`, `blob`, `formData`, `json` or `text`.
+
+In Node.js, `formData` is NOT supported.
 
 
 <a name="new-query-option"></a>
@@ -173,6 +212,10 @@ console.log(luke.name); /* Luke Skywalker */
 const results = await swRequest.fetch({ query: { search: 'luke' } });
 /* final URL will be "https://swapi.co/api/people?search=luke" */
 ```
+
+`query` could be JSON object or string (like `name=luke&height=172`).
+
+If `url` has search fields (like `https://swapi.co/api/people?search=luke`), query string will append to the search fields.
 
 
 <a name="enhanced-body-option"></a>
@@ -200,9 +243,15 @@ const results = await swRequest.fetch({
 /* final header['Content-Type'] will be 'application/x-www-form-urlencoded' */
 ```
 
+`type` value will auto set to headers `Content-Type`.
+
+Value `form` is short for `application/x-www-form-urlencoded`, and `json` is short for `application/json`.
+
 
 <a name="new-simple-option"></a>
 #### New `simple` option
+
+Will throw error if `response` status is non-2xx.
 
 ```js
 try {
@@ -215,6 +264,7 @@ catch (err) {
     console.error(err); /* <-- Error: Bad Request  */
 }
 ```
+
 
 <a name="new-querytransformer-option"></a>
 #### New `queryTransformer` option
@@ -317,13 +367,6 @@ const baseRequest = new RequestExtra({
 });
 /* ... */
 ```
-
-
-<a name="api-references"></a>
-## API References
-
-*TODO*
-
 
 <a name="license"></a>
 ## License
