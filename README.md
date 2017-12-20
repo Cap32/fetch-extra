@@ -233,11 +233,11 @@ const results = await swRequest.fetch('/people', {
 /* final URL will be "https://swapi.co/api/people?search=luke&accessToken=<ACCESS_TOKEN>" */
 ```
 
-Even async / await
+All transformers could return promises.
 
 ```js
 const baseRequest = new RequestExtra({
-    async urlTransformer(url) { /* <-- queryTransformer */
+    async queryTransformer(query) { /* <-- queryTransformer */
         query.accessToken = await getTokenAsync(),
         return query;
     },
