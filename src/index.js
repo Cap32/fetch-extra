@@ -1,5 +1,5 @@
 
-import fetch from 'node-fetch';
+import originalFetch from 'node-fetch';
 import * as qs from 'tiny-querystring';
 
 const { assign } = Object;
@@ -161,9 +161,9 @@ const TransformerHooks = [
 	'Query', 'Url', 'Body', 'Headers', 'Response', 'ResponseData', 'Error',
 ];
 
-const RequestExtra = function RequestExtra(...args) {
-	if (!(this instanceof RequestExtra)) {
-		return new RequestExtra(...args);
+const Request = function Request(...args) {
+	if (!(this instanceof Request)) {
+		return new Request(...args);
 	}
 
 	this.req = {
@@ -178,7 +178,7 @@ const RequestExtra = function RequestExtra(...args) {
 	this._from(...args);
 };
 
-assign(RequestExtra.prototype, {
+assign(Request.prototype, {
 	_from(...args) {
 		args.forEach((arg) => {
 			if (isString(arg)) { this.set('url', arg); }
@@ -192,7 +192,7 @@ assign(RequestExtra.prototype, {
 		});
 	},
 	set(maybeKey, val) {
-		if (maybeKey instanceof RequestExtra) {
+		if (maybeKey instanceof Request) {
 			const instance = maybeKey;
 			this.set(instance.req);
 			this._cloneTransformers(instance.transformers);
@@ -237,7 +237,7 @@ assign(RequestExtra.prototype, {
 		return this;
 	},
 	clone(...args) {
-		return new RequestExtra(this, ...args);
+		return new Request(this, ...args);
 	},
 	compose(...args) {
 		const request = this.clone(...args);
@@ -253,7 +253,7 @@ assign(RequestExtra.prototype, {
 				const setRes = function setRes(resolve) {
 					return (res) => resolve(response = res);
 				};
-				const fetchPromise = fetch(options.url, options)
+				const fetchPromise = originalFetch(options.url, options)
 					.then(setRes((res) => request._applyResponseTransformer(res)))
 					.then(setRes((res) => simple ? handleSimple(res) : res))
 					.then(setRes((res) => shouldResolve(res) ? res[responseType]() : res))
@@ -281,24 +281,25 @@ assign(RequestExtra.prototype, {
 });
 
 TransformerHooks.forEach((hook) => {
-	RequestExtra.prototype[`add${hook}Transformer`] = function (fn) {
+	Request.prototype[`add${hook}Transformer`] = function (fn) {
 		this.transformers[hook].push(fn);
 		return this;
 	};
-	RequestExtra.prototype[`remove${hook}Transformer`] = function (fn) {
+	Request.prototype[`remove${hook}Transformer`] = function (fn) {
 		const transformers = this.transformers[hook];
 		const index = transformers.indexOf(fn);
 		index > -1 && transformers.splice(index, 1);
 		return this;
 	};
-	RequestExtra.prototype[`_apply${hook}Transformer`] = function (val) {
+	Request.prototype[`_apply${hook}Transformer`] = function (val) {
 		return flow(val, this.transformers[hook], this);
 	};
 });
 
-const requestExtra = new RequestExtra();
-const fetchExtra = requestExtra.fetch.bind(requestExtra);
-RequestExtra.fetch = fetchExtra;
+const defaultRequest = new Request();
 
-export const request = RequestExtra;
-export { fetchExtra, RequestExtra };
+export const fetchExtra = defaultRequest.fetch.bind(defaultRequest);
+export const fetch = fetchExtra;
+export const request = Request;
+export const RequestExtra = Request;
+export { Request };

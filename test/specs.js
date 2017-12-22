@@ -1,39 +1,39 @@
 
 import assert from 'assert';
-import { request } from '../src/index.js';
+import { fetch, request } from '../src/index.js';
 
 export default (host) => {
-	describe('request.fetch', async function () {
-		it('request.fetch(url)', async function () {
-			request.fetch(`${host}/ok`);
+	describe('fetch', async function () {
+		it('fetch(url)', async function () {
+			fetch(`${host}/ok`);
 		});
 
 		it('response', async function () {
-			const response = await request.fetch(`${host}/ok`);
+			const response = await fetch(`${host}/ok`);
 			const json = await response.json();
 			assert.deepEqual(json, { method: 'GET' });
 		});
 
 		it('method: POST', async function () {
-			const res = await request.fetch(`${host}/ok`, { method: 'POST' });
+			const res = await fetch(`${host}/ok`, { method: 'POST' });
 			const json = await res.json();
 			assert.deepEqual(json, { method: 'POST' });
 		});
 
 		it('method: PUT', async function () {
-			const res = await request.fetch(`${host}/ok`, { method: 'PUT' });
+			const res = await fetch(`${host}/ok`, { method: 'PUT' });
 			const json = await res.json();
 			assert.deepEqual(json, { method: 'PUT' });
 		});
 
 		it('method: PATCH', async function () {
-			const res = await request.fetch(`${host}/ok`, { method: 'PATCH' });
+			const res = await fetch(`${host}/ok`, { method: 'PATCH' });
 			const json = await res.json();
 			assert.deepEqual(json, { method: 'PATCH' });
 		});
 
 		it('method: DELETE', async function () {
-			const res = await request.fetch(`${host}/ok`, { method: 'DELETE' });
+			const res = await fetch(`${host}/ok`, { method: 'DELETE' });
 			const json = await res.json();
 			assert.deepEqual(json, { method: 'DELETE' });
 		});
@@ -41,17 +41,17 @@ export default (host) => {
 
 	describe('responseType', function () {
 		it('responseType: json', async function () {
-			const body = await request.fetch(`${host}/ok`, { responseType: 'json' });
+			const body = await fetch(`${host}/ok`, { responseType: 'json' });
 			assert.deepEqual(body, { method: 'GET' });
 		});
 
 		it('responseType: text', async function () {
-			const body = await request.fetch(`${host}/text`, { responseType: 'text' });
+			const body = await fetch(`${host}/text`, { responseType: 'text' });
 			assert(body === 'ok');
 		});
 
 		it('should not handle response while response.ok is false', async function () {
-			const body = await request.fetch(`${host}/404`, { responseType: 'text' });
+			const body = await fetch(`${host}/404`, { responseType: 'text' });
 			assert(body !== 'ok');
 		});
 	});
@@ -210,7 +210,6 @@ export default (host) => {
 			const url = '/foo/bar';
 			const client = request({ url });
 			const composed = await client.compose();
-			console.log('composed.url', composed.url);
 			assert(composed.url === url);
 		});
 
@@ -443,8 +442,7 @@ export default (host) => {
 
 	describe('timeout', function () {
 		it('should timeout', async function () {
-			return request
-				.fetch(`${host}/delay`, { timeout: 1 })
+			return fetch(`${host}/delay`, { timeout: 1 })
 				.then(() => assert(false))
 				.catch(() => assert(true))
 			;
@@ -453,24 +451,21 @@ export default (host) => {
 
 	describe('simple', function () {
 		it('should not throw error is `response.ok: true`', async function () {
-			return request
-				.fetch(`${host}/ok`, { simple: true })
+			return fetch(`${host}/ok`, { simple: true })
 				.then(() => assert(true))
 				.catch((err) => assert(false))
 			;
 		});
 
 		it('should throw error if `response.ok: false`', async function () {
-			return request
-				.fetch(`${host}/404`, { simple: true })
+			return fetch(`${host}/404`, { simple: true })
 				.then(() => assert(false))
 				.catch((err) => assert(err.status === 404))
 			;
 		});
 
 		it('should contain a reponse object if fetch failed', async function () {
-			return request
-				.fetch(`${host}/404`, { simple: true })
+			return fetch(`${host}/404`, { simple: true })
 				.then(() => assert(false))
 				.catch((err) => assert(typeof err.response === 'object'))
 			;
@@ -479,16 +474,14 @@ export default (host) => {
 
 	describe('error', function () {
 		it('should throw error if missing url', async function () {
-			return request
-				.fetch()
+			return fetch()
 				.then(() => assert(false))
 				.catch(assert)
 			;
 		});
 
 		it('should throw error if fetch failed', async function () {
-			return request
-				.fetch('http://localhost:1')
+			return fetch('http://localhost:1')
 				.then(() => assert(false))
 				// .catch((err) => assert(err.name === 'FetchError', err.message))
 				.catch((err) => assert(err))
@@ -497,8 +490,7 @@ export default (host) => {
 
 		it('should throw error if transformer failed', async function () {
 			const message = 'Failed to transform url';
-			return request
-				.fetch({
+			return fetch({
 					url: `${host}/ok`,
 					urlTransformer: () => { throw new Error(message); }
 				})
