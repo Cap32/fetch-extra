@@ -5,17 +5,7 @@
 [![dependencies Status](https://david-dm.org/cap32/fetch-extra/status.svg)](https://david-dm.org/cap32/fetch-extra)
 [![License](https://img.shields.io/badge/license-MIT_License-blue.svg?style=flat)](https://github.com/Cap32/fetch-extra/blob/master/LICENSE)
 
-Extra features for whatwg fetch and Request, including:
-
-- Added query option
-- Body could be json object
-- Could resolve json (or text, buffer, etc) instead of response object
-- Support Node.js
-- Added timeout option
-- Enhanced `Resquest#clone()`
-- Added `Resquest#fetch()`
-- Support transformers
-- And so on...
+Extra features for whatwg fetch and Request like `query` option, JSON `body` option, timeout, `transformers`
 
 
 ## Table of Contents
@@ -62,6 +52,11 @@ $ yarn add fetch-extra
 <a name="fetchextra"></a>
 ## fetchExtra
 
+```js
+import { fetchExtra } from 'fetch-extra';
+import { fetch } from 'fetch-extra';  /* or */
+```
+
 ##### Syntax
 
 > Promise\<Response\> fetchExtra(...options)
@@ -69,7 +64,7 @@ $ yarn add fetch-extra
 `...options` \<...String|Object|RequestExtra\>
 
 - If `options` is a string, it is treated as a `URL`
-- If `options` is a object, it is treated as `RequestExtra` options. Checkout below for detail
+- If `options` is a object, it is treated as `RequestExtra` options. Checkout below for detail. All [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) options are supported
 
 Later `options` will similarly overwrite earlier ones.
 
@@ -105,13 +100,18 @@ For more extra options and usages, please checkout below.
 <a name="requestextra"></a>
 ## RequestExtra
 
+```js
+import { RequestExtra } from 'fetch-extra';
+import { Request } from 'fetch-extra';  /* or */
+```
+
 ##### Syntax
 
 > \<RequestExtra\> new RequestExtra(...options)
 
 `...options` \<...String|Object|RequestExtra\>
 
-All options usages are the same with `fetchExtra` options.
+All options are the same with `fetchExtra`.
 
 ##### Description
 
