@@ -69,6 +69,7 @@ const resolveUrls = function resolveUrls(urls) {
 	const isEndsWithSlash = urls[urls.length - 1].substr(-1) === '/';
 	if (isStartsWithSlash) { resolvedUrl = '/' + resolvedUrl; }
 	if (isEndsWithSlash) { resolvedUrl += '/'; }
+	if (resolvedUrl === '//') { resolvedUrl = '/'; }
 	return resolvedUrl;
 };
 
