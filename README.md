@@ -22,6 +22,8 @@ Extra features for whatwg fetch and Request like `query` option, JSON `body` opt
     - [Enhanced `body` option](#enhanced-body-option)
     - [New `type` option](#new-type-option)
     - [New `simple` option](#new-simple-option)
+    - [New `queryStringify` option](#new-querystringify-option)
+    - [New `queryParse` option](#new-queryparse-option)
     - [New `queryTransformer` option](#new-querytransformer-option)
     - [New `urlTransformer` option](#new-urltransformer-option)
     - [New `headersTransformer` option](#new-headerstransformer-option)
@@ -266,6 +268,39 @@ catch (err) {
     console.error(err); /* <-- Error: Bad Request  */
 }
 ```
+
+
+<a name="new-querystringify-option"></a>
+#### New `queryStringify` option
+
+Setting a custom function in charge of serializing `query` object.
+
+```js
+import qs from 'qs';
+
+const request = new Request({
+    queryStringify: qs.stringify,
+});
+```
+
+By default, this function is [tiny-querystring](https://github.com/Cap32/tiny-querystring#stringifyobj) `stringify` function.
+
+
+<a name="new-queryparse-option"></a>
+#### New `queryParse` option
+
+Setting a custom function in charge of parsing `query` string.
+
+```js
+import qs from 'qs';
+
+const request = new Request({
+    queryParse: qs.parse,
+});
+```
+
+By default, this function is [tiny-querystring](https://github.com/Cap32/tiny-querystring#stringifyobj) `parse` function.
+
 
 
 <a name="new-querytransformer-option"></a>
