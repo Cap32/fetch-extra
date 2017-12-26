@@ -15,7 +15,7 @@
     "test:node": "cross-env BABEL_ENV=node nyc --reporter=lcov --reporter=text mocha --require=babel-register --delay test/node.js",
     "test": "run-s test:*",
     "coverage": "cat ./coverage/lcov.info | coveralls",
-    "prepublish": "run-s test build"
+    "preversion": "run-s test build"
   },
   "main": "lib/fetch-extra-node.js",
   "browser": "lib/fetch-extra-browser.js",
