@@ -17,7 +17,7 @@ Extra features for whatwg fetch and Request like `query` option, JSON `body` opt
     - [New `Request#fetch()` method](#new-requestfetch-method)
     - [Enhanced `url` option](#enhanced-url-option)
     - [Enhanced `Request#clone(...options)` method](#enhanced-requestcloneoptions-method)
-    - [New `resolveType` option](#new-resolvetype-option)
+    - [New `responseType` option](#new-responsetype-option)
     - [New `query` option](#new-query-option)
     - [Enhanced `body` option](#enhanced-body-option)
     - [New `type` option](#new-type-option)
@@ -89,7 +89,7 @@ But there are some extra options.
 ```js
 const res = await fetchExtra({
     url: 'https://swapi.co/api/people/1/',
-    resolveType: 'json',
+    responseType: 'json',
     timeout: 30000,
 });
 ```
@@ -191,18 +191,18 @@ const bulbasaur = await pokeRequest.fetch('/pokemon/1/');
 
 The `...options` usages are the same with `fetchExtra` or `RequestExtra`
 
-<a name="new-resolvetype-option"></a>
-#### New `resolveType` option
+<a name="new-responsetype-option"></a>
+#### New `responseType` option
 
 Returning resolved data with specified type instead of `response` object.
 
 ```js
-const options = { resolveType: 'json' };
+const options = { responseType: 'json' };
 const luke = await swRequest.fetch(options); /* <-- no need `await res.json()` */
 console.log(luke.name); /* Luke Skywalker */
 ```
 
-In browser, `resolveType` value could be one of `arrayBuffer`, `blob`, `formData`, `json` or `text`.
+In browser, `responseType` value could be one of `arrayBuffer`, `blob`, `formData`, `json` or `text`.
 
 In Node.js, `formData` is NOT supported.
 
@@ -324,7 +324,7 @@ Transform [response](https://developer.mozilla.org/en-US/docs/Web/API/Response) 
 
 ```js
 const baseRequest = new RequestExtra({
-    resolveType: 'json',
+    responseType: 'json',
     responseTransformer(response) { /* <-- responseTransformer */
         if (response.status === 404) {
             throw new Error('Page not found');
@@ -339,11 +339,11 @@ const baseRequest = new RequestExtra({
 <a name="new-responsedatatransformer-option"></a>
 #### New `responseDataTransformer` option
 
-Like `responseTransformer`, but transform the data after `resolveType` resolved.
+Like `responseTransformer`, but transform the data after `responseType` resolved.
 
 ```js
 const baseRequest = new RequestExtra({
-    resolveType: 'json',
+    responseType: 'json',
     responseDataTransformer(json) { /* <-- responseDataTransformer */
         if (json) { json.fullName = `${json.firstName} ${json.familyName}`; }
         return json;
