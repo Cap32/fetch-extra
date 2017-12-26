@@ -16,12 +16,12 @@ const ErrorNames = {
 	timeout: 'TimeoutError',
 };
 
-const parseUrl = function parseUrl(url, qsLib) {
+const parseUrl = function parseUrl(url, queryParse) {
 	const markIndex = (url += '').indexOf('?');
 	if (~markIndex) {
 		return {
 			path: url.substr(0, markIndex),
-			queryObj: qsLib.parse(url.substr(markIndex + 1)),
+			queryObj: queryParse(url.substr(markIndex + 1)),
 		};
 	}
 	return { path: url, queryObj: {} };
@@ -72,10 +72,10 @@ const resolveUrls = function resolveUrls(urls) {
 	return resolvedUrl;
 };
 
-const composeURL = function composeURL(url, queries, qsLib) {
+const composeURL = function composeURL(url, queries, queryStringify) {
 	const queryStr = queries
 		.reduce((list, query) => {
-			list.push(isObject(query) ? qsLib.stringify(query) : query);
+			list.push(isObject(query) ? queryStringify(query) : query);
 			return list;
 		}, [])
 		.join('&')
@@ -85,7 +85,7 @@ const composeURL = function composeURL(url, queries, qsLib) {
 	return queryStr ? (urlPrefix + sep + queryStr) : urlPrefix;
 };
 
-const composeBody = function composeBody(body, headers, qsLib) {
+const composeBody = function composeBody(body, headers, queryStringify) {
 	const contentType = headers['Content-Type'];
 
 	/* istanbul ignore else */
@@ -94,7 +94,7 @@ const composeBody = function composeBody(body, headers, qsLib) {
 			return JSON.stringify(body);
 		}
 		else if (contentType === ContentTypes.form) {
-			return qsLib.stringify(body);
+			return queryStringify(body);
 		}
 	}
 
@@ -108,12 +108,13 @@ const composeHeaders = function composeHeaders(headers, type) {
 
 const compose = function compose(request) {
 	try {
-		const { qsLib, req } = request;
-		const { type, url, query, body, headers, method } = req;
+		const {
+			type, url, query, body, headers, method, queryStringify, queryParse,
+		} = request.req;
 		const composedHeaders = composeHeaders(headers, type);
-		const composedBody = composeBody(body, composedHeaders, qsLib);
-		const composedURL = composeURL(url, query, qsLib);
-		const { path, queryObj } = parseUrl(composedURL, qsLib);
+		const composedBody = composeBody(body, composedHeaders, queryStringify);
+		const composedURL = composeURL(url, query, queryStringify);
+		const { path, queryObj } = parseUrl(composedURL, queryParse);
 		const couldHaveBody = checkCouldHaveBody(method);
 		const promises = [
 			request._applyQueryTransformer(queryObj),
@@ -128,7 +129,7 @@ const compose = function compose(request) {
 			const path = ref[1];
 			const headers = ref[2];
 			const body = ref[3];
-			const query = qsLib.stringify(queryObj);
+			const query = queryStringify(queryObj);
 			const url = path + (query ? `?${query}` : '');
 			const res = assign({}, request.req, { url, headers });
 			if (couldHaveBody) { res.body = body; }
@@ -173,8 +174,9 @@ const Request = function Request(...args) {
 		body: {},
 		headers: {},
 		method: 'GET',
+		queryStringify: qs.stringify,
+		queryParse: qs.parse,
 	};
-	this.qsLib = qs;
 	this.transformers = {};
 	TransformerHooks.forEach((hook) => (this.transformers[hook] = []));
 	this._from(...args);
@@ -197,7 +199,6 @@ assign(Request.prototype, {
 		if (maybeKey instanceof Request) {
 			const instance = maybeKey;
 			this.set(instance.req);
-			this.qsLib = instance.qsLib;
 			this._cloneTransformers(instance.transformers);
 		}
 		else if (isFunction(maybeKey)) {
@@ -206,9 +207,9 @@ assign(Request.prototype, {
 		}
 		else if (isString(maybeKey)) {
 			const key = maybeKey;
-
-			if (key === 'qsLib') {
-				this.qsLib = val;
+			const { req } = this;
+			if (key === 'queryStringify' || key === 'queryParse') {
+				req[key] = val;
 			}
 			else if (key.slice(-11) === 'Transformer') {
 				const hook = key.charAt(0).toUpperCase() + key.slice(1, -11);
@@ -216,7 +217,6 @@ assign(Request.prototype, {
 				transformer.push.apply(transformer, [].concat(val));
 			}
 			else {
-				const { req } = this;
 				const prev = req[key];
 				const arrKeys = ['url', 'query'];
 				if (isFunction(val)) {

@@ -691,34 +691,34 @@ export default (host) => {
 			});
 		});
 	});
-};
 
-describe('custom qs library', function () {
-	it('custom qs', async function () {
-		const client = request({
-			url: '/',
-			method: 'POST',
-			body: { hello: 'world' },
-			type: 'form',
-			query: {
-				hello: 'world',
-			},
-			queryTransformer(query) {
-				assert.deepEqual(query, { baz: 'qux' });
-				return query;
-			},
-			qsLib: {
-				stringify() {
-					return 'foo=bar';
-				},
-				parse() {
-					return { baz: 'qux' };
-				},
-			},
+
+	describe('custom qs library', function () {
+		it('queryStringify', async function () {
+			const client = request({
+				url: '/',
+				method: 'POST',
+				body: { hello: 'world' },
+				type: 'form',
+				queryStringify: () => 'foo=bar',
+			});
+			const composed = await client.compose();
+			assert(composed.body === 'foo=bar');
 		});
-		const composed = await client.compose();
-		const { body } = composed;
-		assert(body === 'foo=bar', 'body');
-	});
-});
 
+		it('queryParse', async function () {
+			const client = request({
+				url: '/',
+				query: { hello: 'world' },
+				queryTransformer(query) {
+					assert.deepEqual(query, { foo: 'bar' });
+					return query;
+				},
+				queryParse: () => ({ foo: 'bar' }),
+			});
+			const composed = await client.compose();
+			assert(composed.url === '/?foo=bar');
+		});
+	});
+
+};
