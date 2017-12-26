@@ -32,9 +32,9 @@ module.exports = (config) => {
 		},
 
 		rollupPreprocessor: Object.assign(build('karma'), {
-			format: 'iife',
+			// format: 'iife',
 			intro: 'var global = window;',
-			sourcemap: 'inline',
+			// sourcemap: 'inline',
 		}),
 
 

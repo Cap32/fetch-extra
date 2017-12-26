@@ -51,11 +51,12 @@ const presets = {
 module.exports = function createConfig(preset) {
 	const config = presets[preset];
 	return {
-		name: 'fetchExtra',
 		input: 'src/index.js',
 		output: {
 			file: config.file,
 			format: config.format,
+			name: 'fetchExtra',
+			sourcemap: config.sourcemap,
 		},
 		plugins: (config.plugins || []).concat([
 			resolve(),

@@ -692,3 +692,33 @@ export default (host) => {
 		});
 	});
 };
+
+describe('custom qs library', function () {
+	it('custom qs', async function () {
+		const client = request({
+			url: '/',
+			method: 'POST',
+			body: { hello: 'world' },
+			type: 'form',
+			query: {
+				hello: 'world',
+			},
+			queryTransformer(query) {
+				assert.deepEqual(query, { baz: 'qux' });
+				return query;
+			},
+			qsLib: {
+				stringify() {
+					return 'foo=bar';
+				},
+				parse() {
+					return { baz: 'qux' };
+				},
+			},
+		});
+		const composed = await client.compose();
+		const { body } = composed;
+		assert(body === 'foo=bar', 'body');
+	});
+});
+
