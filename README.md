@@ -119,6 +119,7 @@ import { Request } from "fetch-extra";
     url: "https://swapi.co/api/",
     type: "json",
     responseType: "json",
+    timeout: 30000,
     async headersTransformer(headers) {
         headers['access-token'] = await fakeGetToken(),
         return headers;
@@ -159,9 +160,14 @@ import { fetch, Request } from "fetch-extra";
 
 But there are some extra options and methods.
 
+##### Why
+
+`fetch()` is useful, but `new Request()` provides a way to inherit requests. It is recommended to create a base `Request` instance to share base url, `Content-Type` header, access token header, response type, error handler (by using [errorTransformer()](#new-errortransformer-option)), etc, and then `fetch()` or `clone()` the base request.
+
 #### New `Request#fetch()` method
 
 ```js
+import { Request } from 'fetch-extra';
 const request = new Request(url);
 const res = await request.fetch();
 const luke = await res.json();
@@ -170,18 +176,19 @@ const luke = await res.json();
 Fetching with options:
 
 ```js
+import { Request } from 'fetch-extra';
 const request = new Request(url);
 const res = await request.fetch({ method: 'DELETE' });
 const luke = await res.json();
 ```
 
-Notice that this is the recommended way to inherit requests. For example:
+The example above is equal to:
 
 ```js
-const baseRequest = new Request({ url, timeout: 30000 });
-await request.fetch({ method: 'DELETE' });
-await request.fetch({ method: 'POST' });
-await request.fetch({ headers: { token: 'asdf' } });
+import { fetch, Request } from 'fetch-extra';
+const request = new Request(url);
+const res = await fetch(request, { method: 'DELETE' });
+const luke = await res.json();
 ```
 
 #### Enhanced `url` option
