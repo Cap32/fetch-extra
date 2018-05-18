@@ -5,7 +5,8 @@
 		"extra methods and props for whatwg fetch and Request with polyfill",
 	"scripts": {
 		"prebuild": "rimraf lib && mkdirp lib",
-		"build:node": "cross-env babel src/node.js -o lib/fetch-extra-node.js",
+		"build:node":
+			"cross-env babel src/node.js -o lib/fetch-extra-polyfill-node.js",
 		"build:browser": "cross-env BUILD_TARGET=browser rollup -c",
 		"build:umd": "cross-env BUILD_TARGET=umd rollup -c",
 		"build:min": "cross-env BUILD_TARGET=min rollup -c",
@@ -13,8 +14,8 @@
 		"start": "npm run test:node -- -w",
 		"preversion": "run-s test build"
 	},
-	"main": "lib/fetch-extra-node.js",
-	"browser": "lib/fetch-extra-browser.js",
+	"main": "lib/fetch-extra-polyfill-node.js",
+	"browser": "lib/fetch-extra-polyfill-browser.js",
 	"files": ["lib", "*.md"],
 	"keywords": ["fetch", "xhr", "http", "ajax", "promise", "request", "node"],
 	"repository": "https://github.com/Cap32/fetch-extra",

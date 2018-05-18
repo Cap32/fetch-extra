@@ -3,7 +3,6 @@
 const buble = require('rollup-plugin-buble');
 const resolve = require('rollup-plugin-node-resolve');
 const es3 = require('rollup-plugin-es3');
-const alias = require('rollup-plugin-alias');
 const json = require('rollup-plugin-json');
 const commonjs = require('rollup-plugin-commonjs');
 const uglify = require('rollup-plugin-uglify');
@@ -12,15 +11,15 @@ const builtins = require('rollup-plugin-node-builtins');
 
 const presets = {
 	browser: {
-		file: 'lib/fetch-extra-browser.js',
+		file: 'lib/fetch-extra-polyfill-browser.js',
 		format: 'cjs'
 	},
 	umd: {
-		file: 'lib/fetch-extra-umd.js',
+		file: 'lib/fetch-extra-polyfill-umd.js',
 		format: 'umd'
 	},
 	min: {
-		file: 'lib/fetch-extra-min.js',
+		file: 'lib/fetch-extra-polyfill-min.js',
 		format: 'umd',
 		plugins: [uglify({ output: { comments: false } }), filesize()]
 	},
