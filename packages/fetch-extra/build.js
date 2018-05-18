@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 
 const buble = require('rollup-plugin-buble');
 const resolve = require('rollup-plugin-node-resolve');
@@ -11,21 +12,16 @@ const builtins = require('rollup-plugin-node-builtins');
 const pkg = require('./package.json');
 
 const presets = {
-	node: {
-		file: 'lib/fetch-extra-node.js',
-		format: 'cjs',
-		external: Object.keys(pkg.dependencies),
-	},
 	browser: {
 		file: 'lib/fetch-extra-browser.js',
 		format: 'cjs',
-		external: Object.keys(pkg.dependencies).filter((dep) => dep !== 'node-fetch'),
-		plugins: [alias({ 'node-fetch': './fetch' })],
+		external: Object.keys(pkg.dependencies).filter(dep => dep !== 'node-fetch'),
+		plugins: [alias({ 'node-fetch': './fetch' })]
 	},
 	umd: {
 		file: 'lib/fetch-extra-umd.js',
 		format: 'umd',
-		plugins: [alias({ 'node-fetch': './fetch' })],
+		plugins: [alias({ 'node-fetch': './fetch' })]
 	},
 	min: {
 		file: 'lib/fetch-extra-min.js',
@@ -33,8 +29,8 @@ const presets = {
 		plugins: [
 			alias({ 'node-fetch': './fetch' }),
 			uglify({ output: { comments: false } }),
-			filesize(),
-		],
+			filesize()
+		]
 	},
 	karma: {
 		format: 'iife',
@@ -43,9 +39,9 @@ const presets = {
 			alias({ 'node-fetch': './fetch' }),
 			builtins(),
 			json(),
-			commonjs(),
-		],
-	},
+			commonjs()
+		]
+	}
 };
 
 module.exports = function createConfig(preset) {
@@ -56,13 +52,9 @@ module.exports = function createConfig(preset) {
 			file: config.file,
 			format: config.format,
 			name: 'fetchExtra',
-			sourcemap: config.sourcemap,
+			sourcemap: config.sourcemap
 		},
-		plugins: (config.plugins || []).concat([
-			resolve(),
-			buble(),
-			es3(),
-		]),
-		external: config.external || [],
+		plugins: (config.plugins || []).concat([resolve(), buble(), es3()]),
+		external: config.external || []
 	};
 };

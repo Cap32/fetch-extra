@@ -1,21 +1,26 @@
-
 module.exports = {
-	'parser': 'babel-eslint',
-	'extends': [
+	parser: 'babel-eslint',
+	extends: [
 		'standard',
 		'plugin:promise/recommended',
-		'plugin:import/recommended',
+		'plugin:import/recommended'
 	],
-	'env': {
-		'browser': true,
-		'node': true,
-		'es6': true,
-		'mocha': true,
+	env: {
+		browser: true,
+		node: true,
+		es6: true,
+		mocha: true
 	},
-	'rules': {
+	rules: {
 		'import/no-absolute-path': 2,
 		'import/no-extraneous-dependencies': 2,
 		'import/no-mutable-exports': 2,
+		'import/no-unresolved': [
+			2,
+			{
+				ignore: ['^\\w']
+			}
+		],
 		'import/newline-after-import': 1,
 		'import/unambiguous': 0,
 
@@ -24,42 +29,58 @@ module.exports = {
 		'promise/always-return': 0,
 		'promise/no-nesting': 0,
 
-		'semi': [1, 'always'],
+		semi: [1, 'always'],
 		'no-tabs': 0,
 		'comma-dangle': 0,
-		'indent': [2, 'tab', {
-			'SwitchCase': 1
-		}],
+		indent: [
+			2,
+			'tab',
+			{
+				SwitchCase: 1
+			}
+		],
 		'padded-blocks': 0,
-		'space-before-function-paren': [1, {
-			'anonymous': 'always',
-			'named': 'never'
-		}],
-		'max-len': [1, {
-			'code': 80,
-			'tabWidth': 2,
-			'ignoreComments': true,
-			'ignoreStrings': true,
-			'ignoreUrls': true,
-			'ignoreRegExpLiterals': true,
-		}],
+		'space-before-function-paren': [
+			1,
+			{
+				anonymous: 'always',
+				named: 'never'
+			}
+		],
+		'max-len': [
+			1,
+			{
+				code: 80,
+				tabWidth: 2,
+				ignoreComments: true,
+				ignoreStrings: true,
+				ignoreUrls: true,
+				ignoreRegExpLiterals: true
+			}
+		],
 		'brace-style': 0,
 		'operator-linebreak': [1, 'after'],
-		'camelcase': 0,
-		'no-multiple-empty-lines': [1, {
-			'max': 2,
-		}],
-		'no-unused-vars': [1, {
-			'vars': 'all',
-			'args': 'after-used',
-			'caughtErrors': 'none',
-			'ignoreRestSiblings': true,
-		}],
-		'spaced-comment': 0,
+		camelcase: 0,
+		'no-multiple-empty-lines': [
+			1,
+			{
+				max: 2
+			}
+		],
+		'no-unused-vars': [
+			1,
+			{
+				vars: 'all',
+				args: 'after-used',
+				caughtErrors: 'none',
+				ignoreRestSiblings: true
+			}
+		],
+		'spaced-comment': 0
 	},
-	'globals': {
-		'__DEV__': true,
-	},
+	globals: {
+		__DEV__: true
+	}
 	// settings: {
 	// 	'import/resolver': {
 	// 		webpack: {
