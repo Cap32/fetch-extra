@@ -1,4 +1,4 @@
-# fetch-extra
+# fetch-extra-polyfill
 
 [![Build Status](https://travis-ci.org/Cap32/fetch-extra.svg?branch=master)](https://travis-ci.org/Cap32/fetch-extra)
 [![Coverage Status](https://coveralls.io/repos/github/Cap32/fetch-extra/badge.svg?branch=master)](https://coveralls.io/github/Cap32/fetch-extra?branch=master)
@@ -40,19 +40,19 @@ Extra features for whatwg fetch and Request like `query` option, JSON `body` opt
 Using npm:
 
 ```bash
-$ npm install fetch-extra
+$ npm install fetch-extra-polyfill
 ```
 
 Using yarn:
 
 ```bash
-$ yarn add fetch-extra
+$ yarn add fetch-extra-polyfill
 ```
 
 ## fetch
 
 ```js
-import { fetch } from "fetch-extra";
+import { fetch } from "fetch-extra-polyfill";
 (async function main() {
   const url = "https://swapi.co/api/people/";
   const res = await fetch(url, {
@@ -88,7 +88,7 @@ Later `options` will similarly overwrite earlier ones.
 `fetch` syntax adapts to [WHATWG fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API):
 
 ```js
-import { fetch } from "fetch-extra";
+import { fetch } from "fetch-extra-polyfill";
 (async function main() {
   const url = "https://swapi.co/api/people/1/";
   const res = await fetch(url, { method: "GET" });
@@ -113,7 +113,7 @@ For more extra options and usages, please checkout below.
 ## Request
 
 ```js
-import { Request } from "fetch-extra";
+import { Request } from "fetch-extra-polyfill";
 (async function main() {
   const base = new Request({
     url: "https://swapi.co/api/",
@@ -149,7 +149,7 @@ All options are the same with `fetch`.
 Request syntax also adapts to [WHATWG Request](https://developer.mozilla.org/en-US/docs/Web/API/Request).
 
 ```js
-import { fetch, Request } from "fetch-extra";
+import { fetch, Request } from "fetch-extra-polyfill";
 (async function main() {
   const url = "https://swapi.co/api/people/1/";
   const request = new Request(url);
@@ -167,7 +167,7 @@ But there are some extra options and methods.
 #### New `Request#fetch()` method
 
 ```js
-import { Request } from 'fetch-extra';
+import { Request } from 'fetch-extra-polyfill';
 const request = new Request(url);
 const res = await request.fetch();
 const luke = await res.json();
@@ -176,7 +176,7 @@ const luke = await res.json();
 Fetching with options:
 
 ```js
-import { Request } from 'fetch-extra';
+import { Request } from 'fetch-extra-polyfill';
 const request = new Request(url);
 const res = await request.fetch({ method: 'DELETE' });
 const luke = await res.json();
@@ -185,7 +185,7 @@ const luke = await res.json();
 The example above is equal to:
 
 ```js
-import { fetch, Request } from 'fetch-extra';
+import { fetch, Request } from 'fetch-extra-polyfill';
 const request = new Request(url);
 const res = await fetch(request, { method: 'DELETE' });
 const luke = await res.json();
