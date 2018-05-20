@@ -15,12 +15,6 @@ module.exports = {
 		'import/no-absolute-path': 2,
 		'import/no-extraneous-dependencies': 2,
 		'import/no-mutable-exports': 2,
-		'import/no-unresolved': [
-			2,
-			{
-				ignore: ['^\\w']
-			}
-		],
 		'import/newline-after-import': 1,
 		'import/unambiguous': 0,
 
