@@ -49,6 +49,8 @@ Using yarn:
 $ yarn add fetch-extra
 ```
 
+**To install fetch-extra with `window.fetch` polyfill, please istall `fetch-extra-polyfill` instead**
+
 ## fetch
 
 ```js
