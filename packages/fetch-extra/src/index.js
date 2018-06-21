@@ -7,6 +7,7 @@ const isFunction = target => typeof target === 'function';
 const isObject = target => typeof target === 'object';
 
 const arrayTypeProps = ['url', 'query'];
+const funcTypeProps = ['queryStringify', 'queryParse'];
 const maybeFuncTypeProps = ['url', 'query', 'headers', 'body'];
 
 const ContentTypes = {
@@ -235,8 +236,13 @@ assign(Request.prototype, {
 		} else if (isString(maybeKey)) {
 			const key = maybeKey;
 			const { req } = this;
-			if (key === 'queryStringify' || key === 'queryParse') {
-				req[key] = val;
+			if (~funcTypeProps.indexOf(key)) {
+				if (isFunction(val)) req[key] = val;
+				else {
+					throw new Error(
+						`"${key}" should be a function, but received "${typeof value}"`
+					);
+				}
 			} else if (key.slice(-11) === 'Transformer') {
 				const hook = key.charAt(0).toUpperCase() + key.slice(1, -11);
 				const transformer = this.transformers[hook];
@@ -246,8 +252,7 @@ assign(Request.prototype, {
 				if (isFunction(val)) {
 					if (~maybeFuncTypeProps.indexOf(key)) {
 						req[key] = val(prev, req, key);
-					}
-					else {
+					} else {
 						console.warn(`Function type of prop "${key}" is NOT supported`);
 					}
 				} else if (~arrayTypeProps.indexOf(key)) {

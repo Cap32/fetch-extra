@@ -485,7 +485,7 @@ export default host => {
 		it('should not throw error is `response.ok: true`', async function () {
 			return fetch(`${host}/ok`, { simple: true })
 				.then(() => assert(true))
-				.catch(err => assert(false));
+				.catch(err => assert(!err));
 		});
 
 		it('should throw error if `response.ok: false`', async function () {
@@ -754,6 +754,14 @@ export default host => {
 			});
 			const composed = await client.compose();
 			assert(composed.url === '/?foo=bar');
+		});
+
+		it('queryStringify should be function type', async function () {
+			assert.throws(() => request({ queryStringify: 'foo' }));
+		});
+
+		it('queryParse should be function type', async function () {
+			assert.throws(() => request({ queryParse: 'foo' }));
 		});
 	});
 };
