@@ -395,6 +395,13 @@ extglob@^0.3.1:
   dependencies:
     is-extglob "^1.0.0"
 
+fetch-extra@^0.1.1:
+  version "0.1.1"
+  resolved "http://registry.npm.taobao.org/fetch-extra/download/fetch-extra-0.1.1.tgz#dabc7bdc98d148ec7adcc2cb5ff62e8d90660204"
+  dependencies:
+    node-fetch "^2.1.2"
+    tiny-querystring "^0.0.2"
+
 filename-regex@^2.0.0:
   version "2.0.1"
   resolved "http://registry.npm.taobao.org/filename-regex/download/filename-regex-2.0.1.tgz#c1c4b9bee3e09725ddb106b75c1e301fe2f18b26"
@@ -736,6 +743,10 @@ minimalistic-crypto-utils@^1.0.0, minimalistic-crypto-utils@^1.0.1:
 minimist@^1.2.0:
   version "1.2.0"
   resolved "http://registry.npm.taobao.org/minimist/download/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
+
+node-fetch@^2.1.2:
+  version "2.1.2"
+  resolved "http://registry.npm.taobao.org/node-fetch/download/node-fetch-2.1.2.tgz#ab884e8e7e57e38a944753cec706f788d1768bb5"
 
 normalize-path@^2.0.1:
   version "2.1.1"
@@ -1099,6 +1110,10 @@ term-size@^1.2.0:
   resolved "http://registry.npm.taobao.org/term-size/download/term-size-1.2.0.tgz#458b83887f288fc56d6fffbfad262e26638efa69"
   dependencies:
     execa "^0.7.0"
+
+tiny-querystring@^0.0.2:
+  version "0.0.2"
+  resolved "http://registry.npm.taobao.org/tiny-querystring/download/tiny-querystring-0.0.2.tgz#a7aa2f7ba3988e2cc4c0b04752c95ba654438f60"
 
 typedarray-to-buffer@~1.0.0:
   version "1.0.4"

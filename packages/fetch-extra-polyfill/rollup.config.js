@@ -8,18 +8,15 @@ const filesize = require('rollup-plugin-filesize');
 const builtins = require('rollup-plugin-node-builtins');
 
 const presets = {
-	browser: {
-		file: 'lib/fetch-extra-polyfill-browser.js',
-		format: 'cjs'
-	},
 	umd: {
 		file: 'lib/fetch-extra-polyfill-umd.js',
-		format: 'umd'
+		format: 'umd',
+		plugins: [commonjs()]
 	},
 	min: {
 		file: 'lib/fetch-extra-polyfill-min.js',
 		format: 'umd',
-		plugins: [uglify({ output: { comments: false } }), filesize()]
+		plugins: [commonjs(), uglify({ output: { comments: false } }), filesize()]
 	},
 	karma: {
 		format: 'iife',
@@ -36,7 +33,11 @@ module.exports = {
 		file: config.file,
 		format: config.format,
 		name: 'fetchExtraPolyfill',
-		sourcemap: config.sourcemap
+		sourcemap: config.sourcemap,
+		globals: {
+			fetchExtra: 'fetch-extra-browser'
+		}
 	},
+	context: 'window',
 	plugins: (config.plugins || []).concat([resolve(), buble(), es3()])
 };
