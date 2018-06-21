@@ -2,38 +2,34 @@
 
 [![Build Status](https://travis-ci.org/Cap32/fetch-extra.svg?branch=master)](https://travis-ci.org/Cap32/fetch-extra)
 [![Coverage Status](https://coveralls.io/repos/github/Cap32/fetch-extra/badge.svg?branch=master)](https://coveralls.io/github/Cap32/fetch-extra?branch=master)
-[![dependencies Status](https://david-dm.org/cap32/fetch-extra/status.svg)](https://david-dm.org/cap32/fetch-extra)
 [![License](https://img.shields.io/badge/license-MIT_License-brightgreen.svg?style=flat)](https://github.com/Cap32/fetch-extra/blob/master/LICENSE)
 
 Extra features for whatwg fetch and Request like `query` option, JSON `body` option, timeout, `transformers`
 
 ## Table of Contents
 
-<!-- MarkdownTOC -->
-
-* [Installation](#installation)
-* [fetch](#fetch)
-* [Request](#request)
-  * [New `Request#fetch()` method](#new-requestfetch-method)
-  * [Enhanced `url` option](#enhanced-url-option)
-  * [Enhanced `Request#clone(...options)` method](#enhanced-requestcloneoptions-method)
-  * [New `responseType` option](#new-responsetype-option)
-  * [New `query` option](#new-query-option)
-  * [Enhanced `body` option](#enhanced-body-option)
-  * [New `type` option](#new-type-option)
-  * [New `simple` option](#new-simple-option)
-  * [New `queryStringify` option](#new-querystringify-option)
-  * [New `queryParse` option](#new-queryparse-option)
-  * [New `queryTransformer` option](#new-querytransformer-option)
-  * [New `urlTransformer` option](#new-urltransformer-option)
-  * [New `headersTransformer` option](#new-headerstransformer-option)
-  * [New `bodyTransformer` option](#new-bodytransformer-option)
-  * [New `responseTransformer` option](#new-responsetransformer-option)
-  * [New `responseDataTransformer` option](#new-responsedatatransformer-option)
-  * [New `errorTransformer` option](#new-errortransformer-option)
-* [License](#license)
-
-<!-- /MarkdownTOC -->
+- [Table of Contents](#table-of-contents)
+- [Installation](#installation)
+- [fetch](#fetch)
+- [Request](#request)
+  - [New `Request#fetch()` method](#new-requestfetch-method)
+  - [Enhanced `url` option](#enhanced-url-option)
+  - [Enhanced `Request#clone(...options)` method](#enhanced-requestcloneoptions-method)
+  - [New `responseType` option](#new-responsetype-option)
+  - [New `query` option](#new-query-option)
+  - [Enhanced `body` option](#enhanced-body-option)
+  - [New `type` option](#new-type-option)
+  - [New `simple` option](#new-simple-option)
+  - [New `queryStringify` option](#new-querystringify-option)
+  - [New `queryParse` option](#new-queryparse-option)
+  - [New `queryTransformer` option](#new-querytransformer-option)
+  - [New `urlTransformer` option](#new-urltransformer-option)
+  - [New `headersTransformer` option](#new-headerstransformer-option)
+  - [New `bodyTransformer` option](#new-bodytransformer-option)
+  - [New `responseTransformer` option](#new-responsetransformer-option)
+  - [New `responseDataTransformer` option](#new-responsedatatransformer-option)
+  - [New `errorTransformer` option](#new-errortransformer-option)
+- [License](#license)
 
 ## Installation
 
@@ -166,7 +162,7 @@ But there are some extra options and methods.
 
 `fetch()` is useful, but `new Request()` provides a way to inherit requests. It is recommended to create a base `Request` instance to share base url, `Content-Type` header, access token header, response type, error handler (by using [errorTransformer()](#new-errortransformer-option)), etc, and then `fetch()` or `clone()` the base request.
 
-#### New `Request#fetch()` method
+### New `Request#fetch()` method
 
 ```js
 import { Request } from 'fetch-extra';
@@ -193,7 +189,7 @@ const res = await fetch(request, { method: 'DELETE' });
 const luke = await res.json();
 ```
 
-#### Enhanced `url` option
+### Enhanced `url` option
 
 `URLs` could be composed.
 
@@ -216,7 +212,7 @@ const pokeRes = swRequest.fetch("https://pokeapi.co/api/v2/");
 /* final URL will be "https://pokeapi.co/api/v2/" */
 ```
 
-#### Enhanced `Request#clone(...options)` method
+### Enhanced `Request#clone(...options)` method
 
 ```js
 const baseRequest = new Request({
@@ -233,7 +229,7 @@ const bulbasaur = await pokeRequest.fetch('/pokemon/1/');
 
 The `...options` usages are the same with `fetch` or `Request`
 
-#### New `responseType` option
+### New `responseType` option
 
 Returning resolved data with specified type instead of `response` object.
 
@@ -247,7 +243,7 @@ In browser, `responseType` value could be one of `arrayBuffer`, `blob`, `formDat
 
 In Node.js, `formData` is NOT supported.
 
-#### New `query` option
+### New `query` option
 
 ```js
 const results = await swRequest.fetch({ query: { search: 'luke' } });
@@ -258,7 +254,7 @@ const results = await swRequest.fetch({ query: { search: 'luke' } });
 
 If `url` has search fields (like `https://swapi.co/api/people?search=luke`), query string will append to the search fields.
 
-#### Enhanced `body` option
+### Enhanced `body` option
 
 ```js
 const results = await swRequest.fetch({
@@ -268,7 +264,7 @@ const results = await swRequest.fetch({
 /* final body will be '{"name":"Luke Skywalker"}' */
 ```
 
-#### New `type` option
+### New `type` option
 
 ```js
 const results = await swRequest.fetch({
@@ -284,7 +280,7 @@ const results = await swRequest.fetch({
 
 Value `form` is short for `application/x-www-form-urlencoded`, and `json` is short for `application/json`.
 
-#### New `simple` option
+### New `simple` option
 
 Will throw error if `response` status is non-2xx.
 
@@ -297,7 +293,7 @@ await swRequest.fetch({
 });
 ```
 
-#### New `queryStringify` option
+### New `queryStringify` option
 
 Setting a custom function in charge of serializing `query` object.
 
@@ -311,7 +307,7 @@ const request = new Request({
 
 By default, this function is [tiny-querystring](https://github.com/Cap32/tiny-querystring#stringifyobj) `stringify` function.
 
-#### New `queryParse` option
+### New `queryParse` option
 
 Setting a custom function in charge of parsing `query` string.
 
@@ -325,7 +321,9 @@ const request = new Request({
 
 By default, this function is [tiny-querystring](https://github.com/Cap32/tiny-querystring#stringifyobj) `parse` function.
 
-#### New `queryTransformer` option
+### New `queryTransformer` option
+
+Setting a function to transform `query` object, should return a new `query` object. Will be called before fetching.
 
 ```js
 const baseRequest = new Request({
@@ -353,19 +351,19 @@ const baseRequest = new Request({
 /* ... */
 ```
 
-#### New `urlTransformer` option
+### New `urlTransformer` option
 
 Like `queryTransformer`, but transform `url`.
 
-#### New `headersTransformer` option
+### New `headersTransformer` option
 
 Like `queryTransformer`, but transform `headers`.
 
-#### New `bodyTransformer` option
+### New `bodyTransformer` option
 
 Like `queryTransformer`, but transform `body`.
 
-#### New `responseTransformer` option
+### New `responseTransformer` option
 
 Transform [response](https://developer.mozilla.org/en-US/docs/Web/API/Response) instance.
 
@@ -383,7 +381,7 @@ const baseRequest = new Request({
 /* ... */
 ```
 
-#### New `responseDataTransformer` option
+### New `responseDataTransformer` option
 
 Like `responseTransformer`, but transform the data after `responseType` resolved.
 
@@ -401,7 +399,7 @@ const baseRequest = new Request({
 /* ... */
 ```
 
-#### New `errorTransformer` option
+### New `errorTransformer` option
 
 Transform error or rejection.
 
