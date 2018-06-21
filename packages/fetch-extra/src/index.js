@@ -337,3 +337,4 @@ export const fetch = fetchExtra;
 export const request = Request;
 export const RequestExtra = Request;
 export { Request };
+export default fetch;
