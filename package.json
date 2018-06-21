@@ -3,7 +3,8 @@
     "lerna": "lerna",
 		"bootstrap": "lerna bootstrap",
 		"test": "lerna run test",
-		"build": "lerna run build"
+    "build": "lerna run build",
+    "publish": "lerna publish --registry=https://registry.npmjs.org"
 	},
 	"private": true,
 	"devDependencies": {
