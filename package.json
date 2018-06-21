@@ -1,5 +1,6 @@
 {
 	"scripts": {
+    "lerna": "lerna",
 		"bootstrap": "lerna bootstrap",
 		"test": "lerna run test",
 		"build": "lerna run build"

@@ -346,6 +346,10 @@ errno@^0.1.1, errno@~0.1.1:
   dependencies:
     prr "~1.0.1"
 
+es6-object-assign@^1.1.0:
+  version "1.1.0"
+  resolved "http://registry.npm.taobao.org/es6-object-assign/download/es6-object-assign-1.1.0.tgz#c2c3582656247c39ea107cb1e6652b6f9f24523c"
+
 escape-string-regexp@^1.0.5:
   version "1.0.5"
   resolved "http://registry.npm.taobao.org/escape-string-regexp/download/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
