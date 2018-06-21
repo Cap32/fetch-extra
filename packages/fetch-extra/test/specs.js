@@ -1,5 +1,7 @@
 import assert from 'assert';
-import { fetch, request } from '../src/index.js';
+import fetch from '../src/fetch-extra-node';
+
+const { request } = fetch;
 
 export default host => {
 	describe('fetch', async function () {

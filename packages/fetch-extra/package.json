@@ -5,8 +5,7 @@
 	"repository": "Cap32/fetch-extra",
 	"scripts": {
 		"prebuild": "rimraf lib && mkdirp lib",
-		"build:node": "cross-env babel src/index.js -o lib/fetch-extra-node.js",
-		"build:browser": "cross-env BUILD_TARGET=browser rollup -c",
+		"build:node": "cross-env babel src -d lib --ignore whatwg-fetch",
 		"build:umd": "cross-env BUILD_TARGET=umd rollup -c",
 		"build:min": "cross-env BUILD_TARGET=min rollup -c",
 		"build": "run-p build:*",

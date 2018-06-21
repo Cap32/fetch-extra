@@ -7,34 +7,23 @@ const commonjs = require('rollup-plugin-commonjs');
 const uglify = require('rollup-plugin-uglify');
 const filesize = require('rollup-plugin-filesize');
 const builtins = require('rollup-plugin-node-builtins');
-const pkg = require('./package.json');
 
 const presets = {
-	browser: {
-		file: 'lib/fetch-extra-browser.js',
-		format: 'cjs',
-		external: Object.keys(pkg.dependencies).filter(dep => dep !== 'node-fetch'),
-		plugins: [alias({ 'node-fetch': './fetch' })]
-	},
 	umd: {
 		file: 'lib/fetch-extra-umd.js',
-		format: 'umd',
-		plugins: [alias({ 'node-fetch': './fetch' })]
+		format: 'umd'
 	},
 	min: {
 		file: 'lib/fetch-extra-min.js',
 		format: 'umd',
-		plugins: [
-			alias({ 'node-fetch': './fetch' }),
-			uglify({ output: { comments: false } }),
-			filesize()
-		]
+		plugins: [uglify({ output: { comments: false } }), filesize()]
 	},
 	karma: {
 		format: 'iife',
 		sourcemap: 'inline',
+		intro: 'var global = window;',
 		plugins: [
-			alias({ 'node-fetch': './fetch' }),
+			alias({ 'node-fetch': './whatwg-fetch.js' }),
 			builtins(),
 			json(),
 			commonjs()
@@ -45,10 +34,11 @@ const presets = {
 module.exports = function createConfig(preset) {
 	const config = presets[preset];
 	return {
-		input: 'src/index.js',
+		input: 'src/fetch-extra-browser',
 		output: {
 			file: config.file,
 			format: config.format,
+			intro: config.intro,
 			name: 'fetchExtra',
 			sourcemap: config.sourcemap
 		},

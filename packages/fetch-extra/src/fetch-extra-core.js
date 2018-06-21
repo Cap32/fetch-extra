@@ -1,4 +1,3 @@
-import originalFetch from 'node-fetch';
 import * as qs from 'tiny-querystring';
 
 const { assign } = Object;
@@ -190,151 +189,154 @@ const TransformerHooks = [
 	'Error'
 ];
 
-const Request = function Request(...args) {
-	if (!(this instanceof Request)) {
-		return new Request(...args);
-	}
-
-	this.req = {
-		url: [],
-		query: [],
-		body: {},
-		headers: {},
-		method: 'GET',
-		queryStringify: qs.stringify,
-		queryParse: qs.parse
-	};
-	this.transformers = {};
-	TransformerHooks.forEach(hook => (this.transformers[hook] = []));
-	this._from(...args);
-};
-
-assign(Request.prototype, {
-	_from(...args) {
-		args.forEach(arg => {
-			if (isString(arg)) {
-				this.set('url', arg);
-			} else {
-				this.set(arg);
-			}
-		});
-	},
-	_cloneTransformers(transformers) {
-		TransformerHooks.forEach(hook => {
-			const list = this.transformers[hook];
-			list.push.apply(list, transformers[hook]);
-		});
-	},
-	set(maybeKey, val) {
-		if (maybeKey instanceof Request) {
-			const instance = maybeKey;
-			this.set(instance.req);
-			this._cloneTransformers(instance.transformers);
-		} else if (isFunction(maybeKey)) {
-			const modify = maybeKey;
-			modify(this.req);
-		} else if (isString(maybeKey)) {
-			const key = maybeKey;
-			const { req } = this;
-			if (~funcTypeProps.indexOf(key)) {
-				if (isFunction(val)) req[key] = val;
-				else {
-					throw new Error(
-						`"${key}" should be a function, but received "${typeof value}"`
-					);
-				}
-			} else if (key.slice(-11) === 'Transformer') {
-				const hook = key.charAt(0).toUpperCase() + key.slice(1, -11);
-				const transformer = this.transformers[hook];
-				transformer.push.apply(transformer, [].concat(val));
-			} else {
-				const prev = req[key];
-				if (isFunction(val)) {
-					if (~maybeFuncTypeProps.indexOf(key)) {
-						req[key] = val(prev, req, key);
-					} else {
-						console.warn(`Function type of prop "${key}" is NOT supported`);
-					}
-				} else if (~arrayTypeProps.indexOf(key)) {
-					prev.push.apply(prev, [].concat(val));
-				} else if (isObject(prev) && isObject(val)) {
-					assign(prev, val);
-				} else {
-					req[key] = val;
-				}
-			}
-		} else if (isObject(maybeKey)) {
-			const obj = maybeKey;
-			Object.keys(obj).forEach(key => this.set(key, obj[key]));
-		} else {
-			throw new Error(`Can NOT set key "${typeof maybeKey}"`);
+export default function fetchExtreCore(fetchFn) {
+	const Request = function Request(...args) {
+		if (!(this instanceof Request)) {
+			return new Request(...args);
 		}
-		return this;
-	},
-	clone(...args) {
-		return new Request(this, ...args);
-	},
-	compose(...args) {
-		const request = this.clone(...args);
-		return compose(request);
-	},
-	fetch(...args) {
-		const request = this.clone(...args);
-		let response = null;
-		return compose(request)
-			.then(options => {
-				const { responseType, timeout, simple } = options;
-				const shouldResolve = res => responseType && res && res.ok !== false;
-				const setRes = function setRes(resolve) {
-					return res => resolve((response = res));
-				};
-				const fetchPromise = originalFetch(options.url, options)
-					.then(setRes(res => request._applyResponseTransformer(res)))
-					.then(setRes(res => (simple ? handleSimple(res) : res)))
-					.then(setRes(res => (shouldResolve(res) ? res[responseType]() : res)))
-					.then(setRes(res => request._applyResponseDataTransformer(res)));
-				const promises = [fetchPromise];
-				if (timeout) {
-					promises.push(
-						new Promise((resolve, reject) => {
-							setTimeout(() => {
-								const timeoutError = new Error('Timeout');
-								timeoutError.name = ErrorNames.timeout;
-								reject(timeoutError);
-							}, timeout);
-						})
-					);
+
+		this.req = {
+			url: [],
+			query: [],
+			body: {},
+			headers: {},
+			method: 'GET',
+			queryStringify: qs.stringify,
+			queryParse: qs.parse
+		};
+		this.transformers = {};
+		TransformerHooks.forEach(hook => (this.transformers[hook] = []));
+		this._from(...args);
+	};
+
+	assign(Request.prototype, {
+		_from(...args) {
+			args.forEach(arg => {
+				if (isString(arg)) {
+					this.set('url', arg);
+				} else {
+					this.set(arg);
 				}
-				return Promise.race(promises);
-			})
-			.catch(err => {
-				err.response = response;
-				return request._applyErrorTransformer(err).then(e => Promise.reject(e));
 			});
-	}
-});
+		},
+		_cloneTransformers(transformers) {
+			TransformerHooks.forEach(hook => {
+				const list = this.transformers[hook];
+				list.push.apply(list, transformers[hook]);
+			});
+		},
+		set(maybeKey, val) {
+			if (maybeKey instanceof Request) {
+				const instance = maybeKey;
+				this.set(instance.req);
+				this._cloneTransformers(instance.transformers);
+			} else if (isFunction(maybeKey)) {
+				const modify = maybeKey;
+				modify(this.req);
+			} else if (isString(maybeKey)) {
+				const key = maybeKey;
+				const { req } = this;
+				if (~funcTypeProps.indexOf(key)) {
+					if (isFunction(val)) req[key] = val;
+					else {
+						throw new Error(
+							`"${key}" should be a function, but received "${typeof value}"`
+						);
+					}
+				} else if (key.slice(-11) === 'Transformer') {
+					const hook = key.charAt(0).toUpperCase() + key.slice(1, -11);
+					const transformer = this.transformers[hook];
+					transformer.push.apply(transformer, [].concat(val));
+				} else {
+					const prev = req[key];
+					if (isFunction(val)) {
+						if (~maybeFuncTypeProps.indexOf(key)) {
+							req[key] = val(prev, req, key);
+						} else {
+							console.warn(`Function type of prop "${key}" is NOT supported`);
+						}
+					} else if (~arrayTypeProps.indexOf(key)) {
+						prev.push.apply(prev, [].concat(val));
+					} else if (isObject(prev) && isObject(val)) {
+						assign(prev, val);
+					} else {
+						req[key] = val;
+					}
+				}
+			} else if (isObject(maybeKey)) {
+				const obj = maybeKey;
+				Object.keys(obj).forEach(key => this.set(key, obj[key]));
+			} else {
+				throw new Error(`Can NOT set key "${typeof maybeKey}"`);
+			}
+			return this;
+		},
+		clone(...args) {
+			return new Request(this, ...args);
+		},
+		compose(...args) {
+			const request = this.clone(...args);
+			return compose(request);
+		},
+		fetch(...args) {
+			const request = this.clone(...args);
+			let response = null;
+			return compose(request)
+				.then(options => {
+					const { responseType, timeout, simple } = options;
+					const shouldResolve = res => responseType && res && res.ok !== false;
+					const setRes = function setRes(resolve) {
+						return res => resolve((response = res));
+					};
+					const fetchPromise = fetchFn(options.url, options)
+						.then(setRes(res => request._applyResponseTransformer(res)))
+						.then(setRes(res => (simple ? handleSimple(res) : res)))
+						.then(
+							setRes(res => (shouldResolve(res) ? res[responseType]() : res))
+						)
+						.then(setRes(res => request._applyResponseDataTransformer(res)));
+					const promises = [fetchPromise];
+					if (timeout) {
+						promises.push(
+							new Promise((resolve, reject) => {
+								setTimeout(() => {
+									const timeoutError = new Error('Timeout');
+									timeoutError.name = ErrorNames.timeout;
+									reject(timeoutError);
+								}, timeout);
+							})
+						);
+					}
+					return Promise.race(promises);
+				})
+				.catch(err => {
+					err.response = response;
+					return request
+						._applyErrorTransformer(err)
+						.then(e => Promise.reject(e));
+				});
+		}
+	});
 
-TransformerHooks.forEach(hook => {
-	Request.prototype[`add${hook}Transformer`] = function (fn) {
-		this.transformers[hook].push(fn);
-		return this;
-	};
-	Request.prototype[`remove${hook}Transformer`] = function (fn) {
-		const transformers = this.transformers[hook];
-		const index = transformers.indexOf(fn);
-		index > -1 && transformers.splice(index, 1);
-		return this;
-	};
-	Request.prototype[`_apply${hook}Transformer`] = function (val) {
-		return flow(val, this.transformers[hook], this);
-	};
-});
+	TransformerHooks.forEach(hook => {
+		Request.prototype[`add${hook}Transformer`] = function (fn) {
+			this.transformers[hook].push(fn);
+			return this;
+		};
+		Request.prototype[`remove${hook}Transformer`] = function (fn) {
+			const transformers = this.transformers[hook];
+			const index = transformers.indexOf(fn);
+			index > -1 && transformers.splice(index, 1);
+			return this;
+		};
+		Request.prototype[`_apply${hook}Transformer`] = function (val) {
+			return flow(val, this.transformers[hook], this);
+		};
+	});
 
-const defaultRequest = new Request();
+	const defaultRequest = new Request();
 
-export const fetchExtra = defaultRequest.fetch.bind(defaultRequest);
-export const fetch = fetchExtra;
-export const request = Request;
-export const RequestExtra = Request;
-export { Request };
-export default fetch;
+	const fetch = defaultRequest.fetch.bind(defaultRequest);
+	fetch.Request = fetch.request = Request;
+	return fetch;
+}
