@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 
-const build = require('./build');
+const build = require('../../build');
 
 module.exports = config => {
 	const configuration = {
@@ -23,7 +23,11 @@ module.exports = config => {
 			'browser.js': ['rollup']
 		},
 
-		rollupPreprocessor: build('karma'),
+		rollupPreprocessor: build({
+			input: 'src/fetch-extra-browser',
+			name: 'fetchExtra',
+			target: 'karma'
+		}),
 
 		// test results reporter to use
 		// possible values: 'dots', 'progress'

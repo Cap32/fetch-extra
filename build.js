@@ -31,15 +31,15 @@ const presets = {
 	}
 };
 
-module.exports = function createConfig(preset) {
-	const config = presets[preset];
+module.exports = function createConfig({ input, name, target }) {
+	const config = presets[target];
 	return {
-		input: 'src/fetch-extra-browser',
+		input,
 		output: {
 			file: config.file,
 			format: config.format,
 			intro: config.intro,
-			name: 'fetchExtra',
+			name,
 			sourcemap: config.sourcemap
 		},
 		plugins: (config.plugins || []).concat([resolve(), buble(), es3()]),
