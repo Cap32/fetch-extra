@@ -15,7 +15,10 @@
 	"files": [
 		"lib",
 		"*.md"
-	],
+  ],
+  "engines": {
+    "node": ">=4"
+  },
 	"keywords": [
 		"fetch",
 		"xhr",
