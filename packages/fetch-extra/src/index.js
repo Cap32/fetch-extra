@@ -6,6 +6,9 @@ const isString = target => typeof target === 'string';
 const isFunction = target => typeof target === 'function';
 const isObject = target => typeof target === 'object';
 
+const arrayTypeProps = ['url', 'query'];
+const maybeFuncTypeProps = ['url', 'query', 'headers', 'body'];
+
 const ContentTypes = {
 	form: 'application/x-www-form-urlencoded',
 	json: 'application/json'
@@ -240,10 +243,14 @@ assign(Request.prototype, {
 				transformer.push.apply(transformer, [].concat(val));
 			} else {
 				const prev = req[key];
-				const arrKeys = ['url', 'query'];
 				if (isFunction(val)) {
-					req[key] = val(prev, req, key);
-				} else if (~arrKeys.indexOf(key)) {
+					if (~maybeFuncTypeProps.indexOf(key)) {
+						req[key] = val(prev, req, key);
+					}
+					else {
+						console.warn(`Function type of prop "${key}" is NOT supported`);
+					}
+				} else if (~arrayTypeProps.indexOf(key)) {
 					prev.push.apply(prev, [].concat(val));
 				} else if (isObject(prev) && isObject(val)) {
 					assign(prev, val);
