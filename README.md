@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/Cap32/fetch-extra/badge.svg?branch=master)](https://coveralls.io/github/Cap32/fetch-extra?branch=master)
 [![License](https://img.shields.io/badge/license-MIT_License-brightgreen.svg?style=flat)](https://github.com/Cap32/fetch-extra/blob/master/LICENSE)
 
-Extra features for whatwg fetch and Request like `query` option, JSON `body` option, timeout, abort, `transformers`
+Extra features for whatwg fetch and Request like `query` option, JSON `body` option, timeout, abort, `transformers`. Works for browser and Node.js.
 
 ## Table of Contents
 
@@ -299,17 +299,18 @@ await swRequest.fetch({
 Built-in [AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) and [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) polyfill for [aborting fetch](https://developers.google.com/web/updates/2017/09/abortable-fetch).
 
 ```js
-import fetch, { AbortController } from 'fetch-extra';
-const abortController = new AbortController();
-const fetchPromise = fetch({
-    url: 'https://swapi.co/api/people/1',
-    signal: abortController.signal,
-});
-abortController.abort();
-await fetchPromise.catch((err) => {
-    if (err.name === 'AbortError') console.warn('The user aborted a request.');
+import fetch, { AbortController } from "fetch-extra";
+(async function main() {
+  const abortController = new AbortController();
+  const fetchPromise = fetch("https://swapi.co/api/people/1", {
+    signal: abortController.signal
+  });
+  abortController.abort();
+  await fetchPromise.catch(err => {
+    if (err.name === "AbortError") console.warn("Aborted.");
     else console.error(err.message);
-});
+  });
+})();
 ```
 
 ### New `queryStringify` option
