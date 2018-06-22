@@ -130,7 +130,6 @@ const compose = function compose(request) {
 			queryParse
 		} = request.req;
 		const composedHeaders = composeHeaders(headers, type);
-		const composedBody = composeBody(body, composedHeaders, queryStringify);
 		const composedURL = composeURL(url, query, queryStringify);
 		const { path, queryObj } = parseUrl(composedURL, queryParse);
 		const couldHaveBody = checkCouldHaveBody(method);
@@ -140,6 +139,7 @@ const compose = function compose(request) {
 			request._applyHeadersTransformer(composedHeaders)
 		];
 		if (couldHaveBody) {
+			const composedBody = composeBody(body, composedHeaders, queryStringify);
 			promises.push(request._applyBodyTransformer(composedBody));
 		}
 		return Promise.all(promises).then(ref => {
@@ -189,16 +189,23 @@ const TransformerHooks = [
 	'Error'
 ];
 
-export default function fetchExtreCore(fetchFn) {
-	const Request = function Request(...args) {
-		if (!(this instanceof Request)) {
-			return new Request(...args);
+export default function fetchExtreCore({
+	fetch: fetchFn,
+	Request,
+	AbortController,
+	AbortError
+}) {
+	const supportNativeSignal = Request && 'signal' in Request.prototype;
+
+	const RequestExtra = function RequestExtra(...args) {
+		if (!(this instanceof RequestExtra)) {
+			return new RequestExtra(...args);
 		}
 
 		this.req = {
 			url: [],
 			query: [],
-			body: {},
+			body: undefined,
 			headers: {},
 			method: 'GET',
 			queryStringify: qs.stringify,
@@ -209,7 +216,7 @@ export default function fetchExtreCore(fetchFn) {
 		this._from(...args);
 	};
 
-	assign(Request.prototype, {
+	assign(RequestExtra.prototype, {
 		_from(...args) {
 			args.forEach(arg => {
 				if (isString(arg)) {
@@ -226,7 +233,7 @@ export default function fetchExtreCore(fetchFn) {
 			});
 		},
 		set(maybeKey, val) {
-			if (maybeKey instanceof Request) {
+			if (maybeKey instanceof RequestExtra) {
 				const instance = maybeKey;
 				this.set(instance.req);
 				this._cloneTransformers(instance.transformers);
@@ -272,7 +279,7 @@ export default function fetchExtreCore(fetchFn) {
 			return this;
 		},
 		clone(...args) {
-			return new Request(this, ...args);
+			return new RequestExtra(this, ...args);
 		},
 		compose(...args) {
 			const request = this.clone(...args);
@@ -283,7 +290,7 @@ export default function fetchExtreCore(fetchFn) {
 			let response = null;
 			return compose(request)
 				.then(options => {
-					const { responseType, timeout, simple } = options;
+					const { responseType, timeout, simple, signal } = options;
 					const shouldResolve = res => responseType && res && res.ok !== false;
 					const setRes = function setRes(resolve) {
 						return res => resolve((response = res));
@@ -307,6 +314,18 @@ export default function fetchExtreCore(fetchFn) {
 							})
 						);
 					}
+					if (isObject(signal) && !supportNativeSignal) {
+						if (signal.aborted) promises.push(Promise.reject(new AbortError()));
+						else {
+							promises.push(
+								new Promise((resolve, reject) => {
+									signal.addEventListener('abort', () => {
+										reject(new AbortError());
+									});
+								})
+							);
+						}
+					}
 					return Promise.race(promises);
 				})
 				.catch(err => {
@@ -319,24 +338,26 @@ export default function fetchExtreCore(fetchFn) {
 	});
 
 	TransformerHooks.forEach(hook => {
-		Request.prototype[`add${hook}Transformer`] = function (fn) {
+		RequestExtra.prototype[`add${hook}Transformer`] = function (fn) {
 			this.transformers[hook].push(fn);
 			return this;
 		};
-		Request.prototype[`remove${hook}Transformer`] = function (fn) {
+		RequestExtra.prototype[`remove${hook}Transformer`] = function (fn) {
 			const transformers = this.transformers[hook];
 			const index = transformers.indexOf(fn);
 			index > -1 && transformers.splice(index, 1);
 			return this;
 		};
-		Request.prototype[`_apply${hook}Transformer`] = function (val) {
+		RequestExtra.prototype[`_apply${hook}Transformer`] = function (val) {
 			return flow(val, this.transformers[hook], this);
 		};
 	});
 
-	const defaultRequest = new Request();
+	const defaultRequest = new RequestExtra();
 
 	const fetch = defaultRequest.fetch.bind(defaultRequest);
-	fetch.Request = fetch.request = Request;
+	fetch.Request = fetch.request = RequestExtra;
+	fetch.AbortController = AbortController;
+	fetch.AbortError = AbortError;
 	return fetch;
 }
