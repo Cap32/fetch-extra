@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/Cap32/fetch-extra/badge.svg?branch=master)](https://coveralls.io/github/Cap32/fetch-extra?branch=master)
 [![License](https://img.shields.io/badge/license-MIT_License-brightgreen.svg?style=flat)](https://github.com/Cap32/fetch-extra/blob/master/LICENSE)
 
-Extra features for whatwg fetch and Request like `query` option, JSON `body` option, timeout, `transformers`
+Extra features for whatwg fetch and Request like `query` option, JSON `body` option, timeout, abort, `transformers`
 
 ## Table of Contents
 
@@ -20,6 +20,7 @@ Extra features for whatwg fetch and Request like `query` option, JSON `body` opt
   - [Enhanced `body` option](#enhanced-body-option)
   - [New `type` option](#new-type-option)
   - [New `simple` option](#new-simple-option)
+  - [Polyfill `AbortController`](#polyfill-abortcontroller)
   - [New `queryStringify` option](#new-querystringify-option)
   - [New `queryParse` option](#new-queryparse-option)
   - [New `queryTransformer` option](#new-querytransformer-option)
@@ -50,7 +51,7 @@ $ yarn add fetch-extra
 ## fetch
 
 ```js
-import { fetch } from "fetch-extra";
+import fetch from "fetch-extra";
 (async function main() {
   const url = "https://swapi.co/api/people/";
   const res = await fetch(url, {
@@ -74,8 +75,8 @@ import { fetch } from "fetch-extra";
 
 `...options` \<...String|Object|Request\>
 
-* If `options` is a string, it is treated as a `URL`
-* If `options` is a object, it is treated as `Request` options. Checkout below for detail. All [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) options are supported
+- If `options` is a string, it is treated as a `URL`
+- If `options` is a object, it is treated as `Request` options. Checkout below for detail. All [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) options are supported
 
 Later `options` will similarly overwrite earlier ones.
 
@@ -86,7 +87,7 @@ Later `options` will similarly overwrite earlier ones.
 `fetch` syntax adapts to [WHATWG fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API):
 
 ```js
-import { fetch } from "fetch-extra";
+import fetch from "fetch-extra";
 (async function main() {
   const url = "https://swapi.co/api/people/1/";
   const res = await fetch(url, { method: "GET" });
@@ -147,7 +148,7 @@ All options are the same with `fetch`.
 Request syntax also adapts to [WHATWG Request](https://developer.mozilla.org/en-US/docs/Web/API/Request).
 
 ```js
-import { fetch, Request } from "fetch-extra";
+import fetch, { Request } from "fetch-extra";
 (async function main() {
   const url = "https://swapi.co/api/people/1/";
   const request = new Request(url);
@@ -183,7 +184,7 @@ const luke = await res.json();
 The example above is equal to:
 
 ```js
-import { fetch, Request } from 'fetch-extra';
+import fetch, { Request } from 'fetch-extra';
 const request = new Request(url);
 const res = await fetch(request, { method: 'DELETE' });
 const luke = await res.json();
@@ -290,6 +291,24 @@ await swRequest.fetch({
     url: '/400', /* simulate response with 400 HTTP status */
 }).catch((err) => {
     console.error(err); /* <-- Error: Bad Request  */
+});
+```
+
+### Polyfill `AbortController`
+
+Built-in [AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) and [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) polyfill for [aborting fetch](https://developers.google.com/web/updates/2017/09/abortable-fetch).
+
+```js
+import fetch, { AbortController } from 'fetch-extra';
+const abortController = new AbortController();
+const fetchPromise = fetch({
+    url: 'https://swapi.co/api/people/1',
+    signal: abortController.signal,
+});
+abortController.abort();
+await fetchPromise.catch((err) => {
+    if (err.name === 'AbortError') console.warn('The user aborted a request.');
+    else console.error(err.message);
 });
 ```
 
