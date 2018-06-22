@@ -9,7 +9,8 @@ module.exports = {
 		browser: true,
 		node: true,
 		es6: true,
-		mocha: true
+		mocha: true,
+		jest: true
 	},
 	rules: {
 		'import/no-absolute-path': 2,
