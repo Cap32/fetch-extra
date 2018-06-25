@@ -5,6 +5,7 @@
 		"test:browser": "lerna exec --scope fetch-extra-core -- yarn test:browser",
 		"test:node": "lerna exec --scope fetch-extra-core -- yarn test:node",
 		"coverage": "lerna exec --scope fetch-extra-core -- yarn test --coverage",
+		"coveralls": "lerna exec --scope fetch-extra-core -- yarn test --coveralls",
 		"test": "lerna run test",
 		"build": "lerna run build",
 		"lerna-publish": "lerna publish --registry=https://registry.npmjs.org"
