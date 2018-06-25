@@ -37,8 +37,7 @@
 	"license": "MIT",
 	"dependencies": {
 		"fetch-extra-core": "^0.2.0",
-		"node-fetch": "^2.1.2",
-		"tiny-querystring": "^0.0.2"
+		"node-fetch": "^2.1.2"
 	},
 	"devDependencies": {},
 	"jest": {

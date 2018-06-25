@@ -5,12 +5,12 @@
 	"repository": "Cap32/fetch-extra",
 	"scripts": {
 		"prebuild": "rimraf lib && mkdirp lib",
-    "build": "cross-env babel src -d lib",
+		"build": "cross-env babel src -d lib",
 		"start": "jest --watchAll",
-    "test": "jest",
+		"test": "jest",
 		"test:browser": "jest --testPathPattern=browser\\.test",
 		"test:node": "jest --testPathPattern=node\\.test",
-    "coverage": "jest --coverage",
+		"coverage": "jest --coverage",
 		"coveralls": "cat ./coverage/lcov.info | coveralls",
 		"preversion": "run-s test build"
 	},
@@ -34,13 +34,13 @@
 	"author": "cap32",
 	"license": "MIT",
 	"dependencies": {
-		"node-fetch": "^2.1.2",
 		"tiny-querystring": "^0.0.2"
 	},
 	"devDependencies": {
 		"co-body": "^5.2.0",
 		"cors": "^2.8.4",
 		"delay": "^2.0.0",
+		"node-fetch": "^2.1.2",
 		"qs": "^6.5.2",
 		"whatwg-fetch": "^2.0.4"
 	},
