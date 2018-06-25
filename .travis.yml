@@ -17,7 +17,7 @@ before_script:
   - yarn bootstrap
 
 after_script:
-  - yarn coverage
+  - yarn coveralls
 
 notifications:
   email: false
