@@ -1,7 +1,7 @@
 {
 	"name": "fetch-extra-core",
 	"version": "0.2.0",
-	"description": "extra methods and props for whatwg fetch and Request",
+	"description": "the core module for creating `fetch-extra`",
 	"repository": "Cap32/fetch-extra",
 	"scripts": {
 		"prebuild": "rimraf lib && mkdirp lib",
