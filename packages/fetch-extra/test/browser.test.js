@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 
-import 'whatwg-fetch';
-import fetch from '../src/fetch-extra-browser';
+import Event from '../src/browser/Event';
+import EventTarget from '../src/browser/EventTarget';
 import sharedSpecs from './sharedSpecs';
 
-sharedSpecs('browser', fetch);
+sharedSpecs('browser', Event, EventTarget);

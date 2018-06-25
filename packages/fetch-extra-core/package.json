@@ -1,22 +1,20 @@
 {
-	"name": "fetch-extra",
+	"name": "fetch-extra-core",
 	"version": "0.2.0",
 	"description": "extra methods and props for whatwg fetch and Request",
 	"repository": "Cap32/fetch-extra",
 	"scripts": {
 		"prebuild": "rimraf lib && mkdirp lib",
-		"build:node": "cross-env babel src -d lib --ignore whatwg-fetch",
-		"build:umd": "cross-env BUILD_TARGET=umd rollup -c",
-		"build:min": "cross-env BUILD_TARGET=min rollup -c",
-		"build": "run-p build:*",
+    "build": "cross-env babel src -d lib",
 		"start": "jest --watchAll",
+    "test": "jest",
 		"test:browser": "jest --testPathPattern=browser\\.test",
 		"test:node": "jest --testPathPattern=node\\.test",
-		"test": "jest",
+    "coverage": "jest --coverage",
+		"coveralls": "cat ./coverage/lcov.info | coveralls",
 		"preversion": "run-s test build"
 	},
-	"main": "lib/fetch-extra-node.js",
-	"browser": "lib/fetch-extra-browser.js",
+	"main": "lib/index.js",
 	"files": [
 		"lib",
 		"*.md"
@@ -36,11 +34,16 @@
 	"author": "cap32",
 	"license": "MIT",
 	"dependencies": {
-		"fetch-extra-core": "^0.2.0",
 		"node-fetch": "^2.1.2",
 		"tiny-querystring": "^0.0.2"
 	},
-	"devDependencies": {},
+	"devDependencies": {
+		"co-body": "^5.2.0",
+		"cors": "^2.8.4",
+		"delay": "^2.0.0",
+		"qs": "^6.5.2",
+		"whatwg-fetch": "^2.0.4"
+	},
 	"jest": {
 		"collectCoverageFrom": [
 			"src/**/*.js"

@@ -1,12 +1,12 @@
-import createFetch from './fetch-extra-core';
-import AbortError from './Abort/AbortError';
-import createAbortController from './Abort/createAbortController';
-import EventTarget from './Abort/EventTarget';
-import createAbortEvent from './Abort/createAbortEvent';
+import createFetch from 'fetch-extra-core';
+import AbortError from 'fetch-extra-core/lib/Abort/AbortError';
+import createAbortController from 'fetch-extra-core/lib/Abort/createAbortController';
+import EventTarget from './browser/EventTarget';
+import Event from './browser/Event';
 
 export default createFetch({
 	fetch: window.fetch,
 	Request: window.Request,
-	AbortController: createAbortController(EventTarget, createAbortEvent),
+	AbortController: createAbortController({ EventTarget, Event }),
 	AbortError
 });

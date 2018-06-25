@@ -190,7 +190,7 @@ const TransformerHooks = [
 ];
 
 export default function fetchExtreCore({
-	fetch: fetchFn,
+	fetch,
 	Request,
 	AbortController,
 	AbortError
@@ -295,7 +295,7 @@ export default function fetchExtreCore({
 					const setRes = function setRes(resolve) {
 						return res => resolve((response = res));
 					};
-					const fetchPromise = fetchFn(options.url, options)
+					const fetchPromise = fetch(options.url, options)
 						.then(setRes(res => request._applyResponseTransformer(res)))
 						.then(setRes(res => (simple ? handleSimple(res) : res)))
 						.then(
@@ -355,9 +355,9 @@ export default function fetchExtreCore({
 
 	const defaultRequest = new RequestExtra();
 
-	const fetch = defaultRequest.fetch.bind(defaultRequest);
-	fetch.Request = fetch.request = RequestExtra;
-	fetch.AbortController = AbortController;
-	fetch.AbortError = AbortError;
-	return fetch;
+	const fetchExtra = defaultRequest.fetch.bind(defaultRequest);
+	fetchExtra.Request = fetchExtra.request = RequestExtra;
+	fetchExtra.AbortController = AbortController;
+	fetchExtra.AbortError = AbortError;
+	return fetchExtra;
 }

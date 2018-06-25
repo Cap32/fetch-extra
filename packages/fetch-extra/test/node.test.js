@@ -2,7 +2,8 @@
  * @jest-environment node
  */
 
-import fetch from '../src/fetch-extra-node';
+import Event from '../src/node/Event';
+import EventTarget from '../src/node/EventTarget';
 import sharedSpecs from './sharedSpecs';
 
-sharedSpecs('node', fetch);
+sharedSpecs('node', Event, EventTarget);

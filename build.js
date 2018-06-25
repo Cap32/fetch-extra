@@ -1,5 +1,6 @@
 const buble = require('rollup-plugin-buble');
 const resolve = require('rollup-plugin-node-resolve');
+const commonjs = require('rollup-plugin-commonjs');
 const es3 = require('rollup-plugin-es3');
 const uglify = require('rollup-plugin-uglify');
 const filesize = require('rollup-plugin-filesize');
@@ -27,7 +28,12 @@ module.exports = function createConfig({ input, name, target }) {
 			name,
 			sourcemap: config.sourcemap
 		},
-		plugins: (config.plugins || []).concat([resolve(), buble(), es3()]),
+		plugins: (config.plugins || []).concat([
+			resolve(),
+			commonjs(),
+			buble(),
+			es3()
+		]),
 		external: config.external || []
 	};
 };
