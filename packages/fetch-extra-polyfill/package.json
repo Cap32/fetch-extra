@@ -3,9 +3,9 @@
 	"version": "0.2.0",
 	"description": "extra methods and props for whatwg fetch and Request with polyfill",
 	"scripts": {
-		"prebuild": "rimraf lib && mkdirp lib",
-		"build:node": "cross-env babel src/node.js -o lib/fetch-extra-polyfill-node.js",
-		"build:browser": "cross-env babel src/browser.js -o lib/fetch-extra-polyfill-browser.js",
+		"prebuild": "rimraf lib browser dist && mkdirp lib browser dist",
+		"build:node": "babel src/fetch-extra-polyfill-node -d lib",
+		"build:browser": "babel src/fetch-extra-polyfill-browser -d browser",
 		"build:umd": "cross-env BUILD_TARGET=umd rollup -c",
 		"build:min": "cross-env BUILD_TARGET=min rollup -c",
 		"build": "run-p build:*"

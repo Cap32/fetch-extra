@@ -4,9 +4,9 @@
 
 import 'whatwg-fetch';
 import createFetch from '../src/';
-import createAbortController from '../src/Abort/createAbortController';
-import EventTarget from '../../fetch-extra/src/browser/EventTarget';
-import Event from '../../fetch-extra/src/browser/Event';
+import createAbortController from '../src/createAbortController';
+import EventTarget from '../../fetch-extra/src/fetch-extra-browser/EventTarget';
+import Event from '../../fetch-extra/src/fetch-extra-browser/Event';
 import sharedSpecs from './sharedSpecs';
 
 sharedSpecs(

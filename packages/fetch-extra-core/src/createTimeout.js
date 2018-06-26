@@ -1,6 +1,4 @@
-import TimeoutError from './TimeoutError';
-
-export default function createTimeout(delay) {
+export default function createTimeout(delay, TimeoutError) {
 	let timeoutId;
 	const timeoutPromise = new Promise((resolve, reject) => {
 		timeoutId = setTimeout(() => reject(new TimeoutError()), delay);

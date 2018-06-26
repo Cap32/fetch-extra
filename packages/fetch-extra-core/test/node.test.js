@@ -3,10 +3,10 @@
  */
 
 import createFetch from '../src/';
-import createAbortController from '../src/Abort/createAbortController';
+import createAbortController from '../src/createAbortController';
 import nodeFetch from 'node-fetch';
-import EventTarget from '../../fetch-extra/src/node/EventTarget';
-import Event from '../../fetch-extra/src/node/Event';
+import EventTarget from '../../fetch-extra/src/fetch-extra-node/EventTarget';
+import Event from '../../fetch-extra/src/fetch-extra-node/Event';
 import sharedSpecs from './sharedSpecs';
 
 sharedSpecs(

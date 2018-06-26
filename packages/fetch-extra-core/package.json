@@ -4,10 +4,15 @@
 	"description": "the core module for creating `fetch-extra`",
 	"repository": "Cap32/fetch-extra",
 	"scripts": {
-		"prebuild": "rimraf lib && mkdirp lib",
-		"build": "cross-env babel src -d lib",
+    "prebuild": "rimraf lib es-browser browser && mkdirp lib es-browser browser",
+    "postbuild": "rimraf es-browser",
+    "browserbuild:es": "buble src -o es-browser --no modules",
+    "browserbuild:cjs": "babel es-browser -d browser",
+		"build:node": "cross-env BABEL_ENV=node babel src -d lib",
+		"build:browser": "run-s browserbuild:*",
+		"build": "run-p build:*",
 		"start": "jest --watchAll",
-		"test": "jest",
+		"test": "cross-env BABEL_ENV=development jest",
 		"test:browser": "jest --testPathPattern=browser\\.test",
 		"test:node": "jest --testPathPattern=node\\.test",
 		"coverage": "jest --coverage",
@@ -15,8 +20,10 @@
 		"preversion": "run-s test build"
 	},
 	"main": "lib/index.js",
+	"browser": "browser/index.js",
 	"files": [
 		"lib",
+		"browser",
 		"*.md"
 	],
 	"engines": {

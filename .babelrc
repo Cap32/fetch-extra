@@ -1,7 +1,16 @@
 {
   "plugins": [
-    ["transform-es2015-destructuring", { "loose": false }],
-    ["transform-es2015-modules-commonjs", { "loose": false }],
-    "transform-es2015-parameters"
+    ["transform-es2015-modules-commonjs", { "loose": true }]
   ],
+  "env": {
+    "node": {
+      "presets": [
+        ["env", {
+          "targets": {
+            "node": 4
+          }
+        }]
+      ]
+    }
+  }
 }

@@ -7,25 +7,25 @@ const filesize = require('rollup-plugin-filesize');
 
 const presets = {
 	umd: {
-		file: 'lib/fetch-extra-umd.js',
+		suffix: 'umd',
 		format: 'umd'
 	},
 	min: {
-		file: 'lib/fetch-extra-min.js',
+		suffix: 'min',
 		format: 'umd',
 		plugins: [uglify({ output: { comments: false } }), filesize()]
 	}
 };
 
-module.exports = function createConfig({ input, name, target }) {
+module.exports = function createConfig({ name, libName, target }) {
 	const config = presets[target];
 	return {
-		input,
+		input: `src/${name}-browser/index.js`,
 		output: {
-			file: config.file,
+			file: `dist/${name}-${config.suffix}.js`,
 			format: config.format,
 			intro: config.intro,
-			name,
+			name: libName,
 			sourcemap: config.sourcemap
 		},
 		plugins: (config.plugins || []).concat([

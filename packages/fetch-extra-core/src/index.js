@@ -1,7 +1,7 @@
 import * as qs from 'tiny-querystring';
-import createTimeout from './Timeout/createTimeout';
-import DefaultTimeoutError from './Timeout/TimeoutError';
-import DefaultAbortError from './Abort/AbortError';
+import createTimeout from './createTimeout';
+import DefaultTimeoutError from './TimeoutError';
+import DefaultAbortError from './AbortError';
 
 const { assign } = Object;
 const isString = target => typeof target === 'string';
@@ -288,7 +288,7 @@ export default function fetchExtreCore({
 		fetch(...args) {
 			const request = this.clone(...args);
 			let response = null;
-			let timeoutSignal;
+			let timeoutPromise;
 			return compose(request)
 				.then(options => {
 					const { responseType, timeout, simple, signal } = options;
@@ -306,7 +306,8 @@ export default function fetchExtreCore({
 					const promises = [fetchPromise];
 
 					if (timeout) {
-						promises.push((timeoutSignal = createTimeout(timeout)));
+						timeoutPromise = createTimeout(timeout, TimeoutError);
+						promises.push(timeoutPromise);
 					}
 
 					if (isObject(signal) && !supportNativeSignal) {
@@ -322,13 +323,13 @@ export default function fetchExtreCore({
 						}
 					}
 					return Promise.race(promises).then(res => {
-						if (timeoutSignal) timeoutSignal.clear();
+						if (timeoutPromise) timeoutPromise.clear();
 						return res;
 					});
 				})
 				.catch(err => {
 					err.response = response;
-					if (timeoutSignal) timeoutSignal.clear();
+					if (timeoutPromise) timeoutPromise.clear();
 					return request
 						._applyErrorTransformer(err)
 						.then(e => Promise.reject(e));

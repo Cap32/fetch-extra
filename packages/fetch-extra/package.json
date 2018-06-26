@@ -4,8 +4,12 @@
 	"description": "extra methods and props for whatwg fetch and Request",
 	"repository": "Cap32/fetch-extra",
 	"scripts": {
-		"prebuild": "rimraf lib && mkdirp lib",
-		"build:node": "cross-env babel src -d lib --ignore whatwg-fetch",
+    "prebuild": "rimraf lib es-browser browser dist && mkdirp lib es-browser browser dist",
+    "postbuild": "rimraf es-browser",
+    "browserbuild:es": "buble src/fetch-extra-browser -o es-browser --no modules",
+    "browserbuild:cjs": "babel es-browser -d browser",
+		"build:node": "cross-env BABEL_ENV=node babel src/fetch-extra-node -d lib",
+		"build:browser": "run-s browserbuild:*",
 		"build:umd": "cross-env BUILD_TARGET=umd rollup -c",
 		"build:min": "cross-env BUILD_TARGET=min rollup -c",
 		"build": "run-p build:*",
@@ -15,10 +19,12 @@
 		"test": "jest",
 		"preversion": "run-s test build"
 	},
-	"main": "lib/fetch-extra-node.js",
-	"browser": "lib/fetch-extra-browser.js",
+	"main": "lib/index.js",
+	"browser": "browser/index.js",
 	"files": [
 		"lib",
+		"dist",
+		"browser",
 		"*.md"
 	],
 	"engines": {

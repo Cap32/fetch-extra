@@ -1,5 +1,5 @@
 import { createServer, closeServer } from './utils/server';
-import createAbortController from '../src/Abort/createAbortController';
+import createAbortController from '../src/createAbortController';
 import delay from 'delay';
 
 export default function sharedSpecs(name, fetch) {
