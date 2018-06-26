@@ -1,4 +1,7 @@
 import * as qs from 'tiny-querystring';
+import createTimeout from './Timeout/createTimeout';
+import DefaultTimeoutError from './Timeout/TimeoutError';
+import DefaultAbortError from './Abort/AbortError';
 
 const { assign } = Object;
 const isString = target => typeof target === 'string';
@@ -12,10 +15,6 @@ const maybeFuncTypeProps = ['url', 'query', 'headers', 'body'];
 const ContentTypes = {
 	form: 'application/x-www-form-urlencoded',
 	json: 'application/json'
-};
-
-const ErrorNames = {
-	timeout: 'TimeoutError'
 };
 
 const parseUrl = function parseUrl(url, queryParse) {
@@ -193,7 +192,8 @@ export default function fetchExtreCore({
 	fetch,
 	Request,
 	AbortController,
-	AbortError
+	AbortError = DefaultAbortError,
+	TimeoutError = DefaultTimeoutError
 }) {
 	const supportNativeSignal = Request && 'signal' in Request.prototype;
 
@@ -288,6 +288,7 @@ export default function fetchExtreCore({
 		fetch(...args) {
 			const request = this.clone(...args);
 			let response = null;
+			let timeoutSignal;
 			return compose(request)
 				.then(options => {
 					const { responseType, timeout, simple, signal } = options;
@@ -303,17 +304,11 @@ export default function fetchExtreCore({
 						)
 						.then(setRes(res => request._applyResponseDataTransformer(res)));
 					const promises = [fetchPromise];
+
 					if (timeout) {
-						promises.push(
-							new Promise((resolve, reject) => {
-								setTimeout(() => {
-									const timeoutError = new Error('Timeout');
-									timeoutError.name = ErrorNames.timeout;
-									reject(timeoutError);
-								}, timeout);
-							})
-						);
+						promises.push((timeoutSignal = createTimeout(timeout)));
 					}
+
 					if (isObject(signal) && !supportNativeSignal) {
 						if (signal.aborted) promises.push(Promise.reject(new AbortError()));
 						else {
@@ -326,10 +321,14 @@ export default function fetchExtreCore({
 							);
 						}
 					}
-					return Promise.race(promises);
+					return Promise.race(promises).then(res => {
+						if (timeoutSignal) timeoutSignal.clear();
+						return res;
+					});
 				})
 				.catch(err => {
 					err.response = response;
+					if (timeoutSignal) timeoutSignal.clear();
 					return request
 						._applyErrorTransformer(err)
 						.then(e => Promise.reject(e));
@@ -359,5 +358,6 @@ export default function fetchExtreCore({
 	fetchExtra.Request = fetchExtra.request = RequestExtra;
 	fetchExtra.AbortController = AbortController;
 	fetchExtra.AbortError = AbortError;
+	fetchExtra.TimeoutError = TimeoutError;
 	return fetchExtra;
 }

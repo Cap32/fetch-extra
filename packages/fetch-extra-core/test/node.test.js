@@ -3,7 +3,6 @@
  */
 
 import createFetch from '../src/';
-import AbortError from '../src/Abort/AbortError';
 import createAbortController from '../src/Abort/createAbortController';
 import nodeFetch from 'node-fetch';
 import EventTarget from '../../fetch-extra/src/node/EventTarget';
@@ -15,7 +14,6 @@ sharedSpecs(
 	createFetch({
 		fetch: nodeFetch,
 		Request: nodeFetch.Request,
-		AbortController: createAbortController({ EventTarget, Event }),
-		AbortError
+		AbortController: createAbortController({ EventTarget, Event })
 	})
 );

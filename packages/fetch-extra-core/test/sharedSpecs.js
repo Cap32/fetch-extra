@@ -3,7 +3,7 @@ import createAbortController from '../src/Abort/createAbortController';
 import delay from 'delay';
 
 export default function sharedSpecs(name, fetch) {
-	const { request, AbortController, AbortError } = fetch;
+	const { request, AbortController, AbortError, TimeoutError } = fetch;
 
 	describe(name, () => {
 		let host;
@@ -488,7 +488,14 @@ export default function sharedSpecs(name, fetch) {
 
 		describe('timeout', () => {
 			test('should timeout', async () => {
-				await expect(fetch(`${host}/delay`, { timeout: 1 })).rejects.toThrow();
+				await expect(fetch(`${host}/delay`, { timeout: 1 })).rejects.toThrow(
+					expect.any(TimeoutError)
+				);
+			});
+
+			test('should not timeout', async () => {
+				const options = { timeout: 1000 };
+				await expect(fetch(`${host}/ok`, options)).resolves.not.toThrow();
 			});
 		});
 
