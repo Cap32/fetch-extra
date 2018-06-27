@@ -1,13 +1,13 @@
 {
 	"name": "fetch-extra-core",
-	"version": "0.2.0",
+	"version": "1.0.0-0",
 	"description": "the core module for creating `fetch-extra`",
 	"repository": "Cap32/fetch-extra",
 	"scripts": {
-    "prebuild": "rimraf lib es-browser browser && mkdirp lib es-browser browser",
-    "postbuild": "rimraf es-browser",
-    "browserbuild:es": "buble src -o es-browser --no modules",
-    "browserbuild:cjs": "babel es-browser -d browser",
+		"prebuild": "rimraf lib es-browser browser && mkdirp lib es-browser browser",
+		"postbuild": "rimraf es-browser",
+		"browserbuild:es": "buble src -o es-browser --no modules",
+		"browserbuild:cjs": "babel es-browser -d browser",
 		"build:node": "cross-env BABEL_ENV=build babel src -d lib",
 		"build:browser": "run-s browserbuild:*",
 		"build": "run-p build:*",

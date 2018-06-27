@@ -1,13 +1,13 @@
 {
 	"name": "fetch-extra",
-	"version": "0.2.0",
+	"version": "1.0.0-0",
 	"description": "extra methods and props for whatwg fetch and Request",
 	"repository": "Cap32/fetch-extra",
 	"scripts": {
-    "prebuild": "rimraf lib es-browser browser dist && mkdirp lib es-browser browser dist",
-    "postbuild": "rimraf es-browser",
-    "browserbuild:es": "buble src/fetch-extra-browser -o es-browser --no modules",
-    "browserbuild:cjs": "babel es-browser -d browser",
+		"prebuild": "rimraf lib es-browser browser dist && mkdirp lib es-browser browser dist",
+		"postbuild": "rimraf es-browser",
+		"browserbuild:es": "buble src/fetch-extra-browser -o es-browser --no modules",
+		"browserbuild:cjs": "babel es-browser -d browser",
 		"build:node": "cross-env BABEL_ENV=build babel src/fetch-extra-node -d lib",
 		"build:browser": "run-s browserbuild:*",
 		"build:umd": "cross-env BUILD_TARGET=umd rollup -c",
@@ -42,10 +42,9 @@
 	"author": "cap32",
 	"license": "MIT",
 	"dependencies": {
-		"fetch-extra-core": "^0.2.0",
+		"fetch-extra-core": "^1.0.0-0",
 		"node-fetch": "^2.1.2"
 	},
-	"devDependencies": {},
 	"jest": {
 		"collectCoverageFrom": [
 			"src/**/*.js"
