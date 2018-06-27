@@ -4,15 +4,15 @@
 [![Coverage Status](https://coveralls.io/repos/github/Cap32/fetch-extra/badge.svg?branch=master)](https://coveralls.io/github/Cap32/fetch-extra?branch=master)
 [![License](https://img.shields.io/badge/license-MIT_License-brightgreen.svg?style=flat)](https://github.com/Cap32/fetch-extra/blob/master/LICENSE)
 
-Extra features for whatwg fetch and Request like `query` option, JSON `body` option, timeout, abort, `transformers`. Works for browser and Node.js.
+Extra features for [whatwg fetch](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch) and [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request) like `query` object, JSON `body`, timeout, [abort](https://developers.google.com/web/updates/2017/09/abortable-fetch), `transformers`. Works for browser and Node.js.
 
 ## Table of Contents
 
 - [Table of Contents](#table-of-contents)
-- [Installation](#installation)
+- [Installations](#installations)
 - [fetch](#fetch)
 - [Request](#request)
-  - [New `Request#fetch()` method](#new-requestfetch-method)
+  - [New `Request#fetch(...options)` method](#new-requestfetchoptions-method)
   - [Enhanced `url` option](#enhanced-url-option)
   - [Enhanced `Request#clone(...options)` method](#enhanced-requestcloneoptions-method)
   - [New `responseType` option](#new-responsetype-option)
@@ -32,7 +32,7 @@ Extra features for whatwg fetch and Request like `query` option, JSON `body` opt
   - [New `errorTransformer` option](#new-errortransformer-option)
 - [License](#license)
 
-## Installation
+## Installations
 
 Using npm:
 
@@ -40,10 +40,11 @@ Using npm:
 $ npm install fetch-extra
 ```
 
-Using yarn:
+Or using 1998 Script Tag:
 
-```bash
-$ yarn add fetch-extra
+```html
+<script src="https://unpkg.com/fetch-extra@latest/dist/fetch-extra-umd.js"></script>
+(Module exposed as `fetchExtra`)
 ```
 
 **To install fetch-extra with `window.fetch` polyfill, please istall `fetch-extra-polyfill` instead**
@@ -139,7 +140,7 @@ import { Request } from "fetch-extra";
 
 `...options` \<...String|Object|Request\>
 
-All options are the same with `fetch`.
+All options are the same with `fetch(...options)`.
 
 ##### Description
 
@@ -163,7 +164,11 @@ But there are some extra options and methods.
 
 `fetch()` is useful, but `new Request()` provides a way to inherit requests. It is recommended to create a base `Request` instance to share base url, `Content-Type` header, access token header, response type, error handler (by using [errorTransformer()](#new-errortransformer-option)), etc, and then `fetch()` or `clone()` the base request.
 
-### New `Request#fetch()` method
+### New `Request#fetch(...options)` method
+
+A shortcut for `fetch(request, ...options)`.
+
+All options are the same with `fetch(...options)`.
 
 ```js
 import { Request } from 'fetch-extra';
@@ -228,7 +233,7 @@ const pokeRequest = baseRequest.clone('https://pokeapi.co/api/v2/');
 const bulbasaur = await pokeRequest.fetch('/pokemon/1/');
 ```
 
-The `...options` usages are the same with `fetch` or `Request`
+The `...options` usages are the same with `fetch(...options)` and `new Request(...options)`
 
 ### New `responseType` option
 
