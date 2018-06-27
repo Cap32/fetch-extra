@@ -16,7 +16,8 @@
 		"test:browser": "jest --testPathPattern=browser\\.test",
 		"test:node": "jest --testPathPattern=node\\.test",
 		"coverage": "jest --coverage",
-		"coveralls": "cat ./coverage/lcov.info | coveralls",
+		"coveralls:exec": "cat ./coverage/lcov.info | coveralls",
+		"coveralls": "run-s coverage coveralls:exec",
 		"preversion": "run-s test build"
 	},
 	"main": "lib/index.js",
