@@ -1,5 +1,5 @@
 export default function createAbortSignal(EventTarget) {
-	return class AbortSignal extends EventTarget {
+	class AbortSignal extends EventTarget {
 		constructor() {
 			super();
 
@@ -21,5 +21,7 @@ export default function createAbortSignal(EventTarget) {
 			this.addEventListener('abort', listener);
 			return true;
 		}
-	};
+	}
+
+	return AbortSignal;
 }

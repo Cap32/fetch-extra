@@ -488,9 +488,9 @@ export default function sharedSpecs(name, fetch) {
 
 		describe('timeout', () => {
 			test('should timeout', async () => {
-				await expect(fetch(`${host}/delay`, { timeout: 1 })).rejects.toThrow(
-					expect.any(TimeoutError)
-				);
+				await expect(
+					fetch(`${host}/delay`, { timeout: 1 })
+				).rejects.toThrowError(new TimeoutError().message);
 			});
 
 			test('should not timeout', async () => {
@@ -790,15 +790,15 @@ export default function sharedSpecs(name, fetch) {
 				const promise = fetch(`${host}/delay`, { signal });
 				await delay(10);
 				abortController.abort();
-				await expect(promise).rejects.toThrow(expect.any(AbortError));
+				await expect(promise).rejects.toThrowError(new AbortError().message);
 			});
 
 			test('aborted signal', async () => {
 				const abortController = new AbortController();
 				abortController.abort();
 				const { signal } = abortController;
-				await expect(fetch(`${host}/delay`, { signal })).rejects.toThrow(
-					expect.any(AbortError)
+				await expect(fetch(`${host}/delay`, { signal })).rejects.toThrowError(
+					new AbortError().message
 				);
 			});
 		});

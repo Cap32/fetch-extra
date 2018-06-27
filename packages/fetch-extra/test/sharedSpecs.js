@@ -35,7 +35,6 @@ export default function sharedSpecs(name, Event, EventTarget) {
 				eventTarget.dispatchEvent(event);
 				expect(listener).not.toBeCalled();
 			});
-
 		});
 	});
 }

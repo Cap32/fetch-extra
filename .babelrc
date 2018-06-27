@@ -1,9 +1,9 @@
 {
   "plugins": [
-    ["transform-es2015-modules-commonjs", { "loose": true }]
+    ["transform-es2015-modules-commonjs", { "strict": true, "noInterop": true }]
   ],
   "env": {
-    "node": {
+    "build": {
       "presets": [
         ["env", {
           "targets": {

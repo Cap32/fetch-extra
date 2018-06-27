@@ -4,7 +4,7 @@
 		"bootstrap": "lerna bootstrap",
 		"test:browser": "lerna exec --scope fetch-extra-core -- yarn test:browser",
 		"test:node": "lerna exec --scope fetch-extra-core -- yarn test:node",
-		"coverage": "lerna exec --scope fetch-extra-core -- yarn test --coverage",
+		"coverage": "lerna exec --scope fetch-extra-core -- yarn coverage",
 		"coveralls": "lerna exec --scope fetch-extra-core -- yarn coveralls",
 		"test": "lerna run test",
 		"build": "lerna run build",

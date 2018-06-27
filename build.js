@@ -13,7 +13,10 @@ const presets = {
 	min: {
 		suffix: 'min',
 		format: 'umd',
-		plugins: [uglify({ output: { comments: false } }), filesize()]
+		plugins: [
+			uglify({ compress: { pure_funcs: ['Object.defineProperty'] } }),
+			filesize()
+		]
 	}
 };
 
@@ -28,12 +31,9 @@ module.exports = function createConfig({ name, libName, target }) {
 			name: libName,
 			sourcemap: config.sourcemap
 		},
-		plugins: (config.plugins || []).concat([
-			resolve(),
-			commonjs(),
-			buble(),
-			es3()
-		]),
+		plugins: [resolve(), commonjs(), es3(), buble()].concat(
+			config.plugins || []
+		),
 		external: config.external || []
 	};
 };
