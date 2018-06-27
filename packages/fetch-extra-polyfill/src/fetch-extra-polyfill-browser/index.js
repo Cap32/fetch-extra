@@ -1,4 +1,4 @@
-import 'whatwg-fetch';
-import 'es6-object-assign/auto';
+require('whatwg-fetch');
+require('es6-object-assign/auto');
 
-export * from 'fetch-extra/browser';
+module.exports = require('fetch-extra/browser');

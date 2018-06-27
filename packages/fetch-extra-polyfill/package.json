@@ -10,8 +10,8 @@
 		"build:min": "cross-env BUILD_TARGET=min rollup -c",
 		"build": "run-p build:*"
 	},
-	"main": "lib/fetch-extra-polyfill-node.js",
-	"browser": "lib/fetch-extra-polyfill-browser.js",
+	"main": "lib/index.js",
+	"browser": "browser/index.js",
 	"files": [
 		"lib",
 		"*.md"

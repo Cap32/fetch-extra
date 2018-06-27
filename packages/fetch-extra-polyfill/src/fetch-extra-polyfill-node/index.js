@@ -1,1 +1,1 @@
-export * from 'fetch-extra/lib';
+module.exports = require('fetch-extra/lib');

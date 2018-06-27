@@ -1,1 +1,1 @@
-module.default = require('./fetch-extra').default;
+module.exports = require('./fetch-extra').default;
