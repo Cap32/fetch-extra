@@ -357,6 +357,7 @@ export default function fetchExtreCore({
 
 	const fetchExtra = defaultRequest.fetch.bind(defaultRequest);
 	fetchExtra.Request = fetchExtra.request = RequestExtra;
+	fetchExtra.fetch = fetchExtra;
 	fetchExtra.AbortController = AbortController;
 	fetchExtra.AbortError = AbortError;
 	fetchExtra.TimeoutError = TimeoutError;
