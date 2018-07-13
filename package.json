@@ -8,7 +8,8 @@
 		"coveralls": "lerna exec --scope fetch-extra-core -- yarn coveralls",
 		"test": "lerna run test",
 		"build": "lerna run build",
-		"lerna-publish": "lerna publish --registry=https://registry.npmjs.org"
+		"lerna-publish": "lerna publish --registry=https://registry.npmjs.org",
+		"lerna-publish-2fa-template": "NPM_CONFIG_OTP=<CODE> lerna publish --npm-client=npm --registry=https://registry.npmjs.org"
 	},
 	"private": true,
 	"devDependencies": {
