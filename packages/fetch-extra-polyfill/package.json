@@ -13,7 +13,9 @@
 	"main": "lib/index.js",
 	"browser": "browser/index.js",
 	"files": [
-		"lib",
+    "lib",
+    "dist",
+    "browser",
 		"*.md"
 	],
 	"engines": {
