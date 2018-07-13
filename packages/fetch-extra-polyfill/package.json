@@ -1,6 +1,6 @@
 {
 	"name": "fetch-extra-polyfill",
-	"version": "1.0.0-0",
+	"version": "1.0.0-1",
 	"description": "extra methods and props for whatwg fetch and Request with polyfill",
 	"scripts": {
 		"prebuild": "rimraf lib browser dist && mkdirp lib browser dist",
@@ -13,9 +13,9 @@
 	"main": "lib/index.js",
 	"browser": "browser/index.js",
 	"files": [
-    "lib",
-    "dist",
-    "browser",
+		"lib",
+		"dist",
+		"browser",
 		"*.md"
 	],
 	"engines": {
@@ -35,7 +35,7 @@
 	"license": "MIT",
 	"dependencies": {
 		"es6-object-assign": "^1.1.0",
-		"fetch-extra": "^1.0.0-0",
+		"fetch-extra": "^1.0.0-1",
 		"whatwg-fetch": "^2.0.4"
 	},
 	"devDependencies": {
