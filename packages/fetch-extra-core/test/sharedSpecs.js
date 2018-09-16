@@ -65,6 +65,16 @@ export default function sharedSpecs(name, fetch) {
 				const body = await fetch(`${host}/404`, { responseType: 'text' });
 				expect(body).not.toBe('ok');
 			});
+
+			test('should not handle response while response type is not supported', async () => {
+				const res = await fetch(`${host}/ok`, { responseType: 'foo' });
+				expect(res).toMatchObject({ ok: true, status: 200 });
+			});
+
+			test('should not handle response while response type is "none"', async () => {
+				const res = await fetch(`${host}/ok`, { responseType: 'none' });
+				expect(res).toMatchObject({ ok: true, status: 200 });
+			});
 		});
 
 		describe('client constructor', () => {

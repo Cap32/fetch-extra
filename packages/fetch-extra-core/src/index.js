@@ -292,7 +292,15 @@ export default function fetchExtreCore({
 			return compose(request)
 				.then(options => {
 					const { responseType, timeout, simple, signal } = options;
-					const shouldResolve = res => responseType && res && res.ok !== false;
+					const shouldHandleRes = res => {
+						if (!res || !res.ok || !responseType || responseType === 'none') {
+							return false;
+						}
+						const responseTypeFn = res[responseType];
+						if (isFunction(responseTypeFn)) return true;
+						console.warn(`Response type "${responseType}" is NOT supported`);
+						return false;
+					};
 					const setRes = function setRes(resolve) {
 						return res => resolve((response = res));
 					};
@@ -300,7 +308,7 @@ export default function fetchExtreCore({
 						.then(setRes(res => request._applyResponseTransformer(res)))
 						.then(setRes(res => (simple ? handleSimple(res) : res)))
 						.then(
-							setRes(res => (shouldResolve(res) ? res[responseType]() : res))
+							setRes(res => (shouldHandleRes(res) ? res[responseType]() : res))
 						)
 						.then(setRes(res => request._applyResponseDataTransformer(res)));
 					const promises = [fetchPromise];
