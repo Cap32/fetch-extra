@@ -1,6 +1,6 @@
 {
 	"name": "fetch-extra",
-	"version": "1.0.0-1",
+	"version": "1.0.0-2",
 	"description": "extra methods and props for whatwg fetch and Request",
 	"repository": "Cap32/fetch-extra",
 	"scripts": {
@@ -42,7 +42,7 @@
 	"author": "cap32",
 	"license": "MIT",
 	"dependencies": {
-		"fetch-extra-core": "^1.0.0-1",
+		"fetch-extra-core": "^1.0.0-2",
 		"node-fetch": "^2.1.2"
 	},
 	"jest": {
