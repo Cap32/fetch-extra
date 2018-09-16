@@ -104,7 +104,7 @@ const res = await fetch({
   url: "https://swapi.co/api/people/1/",
   query: { page: 32 },
   responseType: "json",
-  timeout: 30000,
+  timeout: 30000
 });
 ```
 
@@ -171,7 +171,7 @@ A shortcut for `fetch(request, ...options)`.
 All options are the same with `fetch(...options)`.
 
 ```js
-import { Request } from 'fetch-extra';
+import { Request } from "fetch-extra";
 const request = new Request(url);
 const res = await request.fetch();
 const luke = await res.json();
@@ -180,18 +180,18 @@ const luke = await res.json();
 Fetching with options:
 
 ```js
-import { Request } from 'fetch-extra';
+import { Request } from "fetch-extra";
 const request = new Request(url);
-const res = await request.fetch({ method: 'DELETE' });
+const res = await request.fetch({ method: "DELETE" });
 const luke = await res.json();
 ```
 
 The example above is equal to:
 
 ```js
-import fetch, { Request } from 'fetch-extra';
+import fetch, { Request } from "fetch-extra";
 const request = new Request(url);
-const res = await fetch(request, { method: 'DELETE' });
+const res = await fetch(request, { method: "DELETE" });
 const luke = await res.json();
 ```
 
@@ -200,13 +200,13 @@ const luke = await res.json();
 `URLs` could be composed.
 
 ```js
-const baseUrl = 'https://swapi.co/api/';
+const baseUrl = "https://swapi.co/api/";
 const swRequest = new Request(baseUrl);
 
-const lukeRes = await swRequest.fetch('/people/1/');
+const lukeRes = await swRequest.fetch("/people/1/");
 /* final URL will be "https://swapi.co/api/people/1/" */
 
-const starShipRes = await swRequest.fetch('/starships/9/');
+const starShipRes = await swRequest.fetch("/starships/9/");
 /* final URL will be "https://swapi.co/api/starships/9/" */
 ```
 
@@ -222,15 +222,15 @@ const pokeRes = swRequest.fetch("https://pokeapi.co/api/v2/");
 
 ```js
 const baseRequest = new Request({
-    headers: { 'Content-Type': 'application/json' },
+  headers: { "Content-Type": "application/json" }
 });
 
-const swRequest = baseRequest.clone('https://swapi.co/api/');
-const luke = await swRequest.fetch('/people/1/');
-const c3po = await swRequest.fetch('/people/2/');
+const swRequest = baseRequest.clone("https://swapi.co/api/");
+const luke = await swRequest.fetch("/people/1/");
+const c3po = await swRequest.fetch("/people/2/");
 
-const pokeRequest = baseRequest.clone('https://pokeapi.co/api/v2/');
-const bulbasaur = await pokeRequest.fetch('/pokemon/1/');
+const pokeRequest = baseRequest.clone("https://pokeapi.co/api/v2/");
+const bulbasaur = await pokeRequest.fetch("/pokemon/1/");
 ```
 
 The `...options` usages are the same with `fetch(...options)` and `new Request(...options)`
@@ -240,8 +240,10 @@ The `...options` usages are the same with `fetch(...options)` and `new Request(.
 Returning resolved data with specified type instead of `response` object.
 
 ```js
-const options = { responseType: 'json' };
-const luke = await swRequest.fetch(options); /* <-- no need `await res.json()` */
+const options = { responseType: "json" };
+const luke = await swRequest.fetch(
+  options
+); /* <-- no need `await res.json()` */
 console.log(luke.name); /* Luke Skywalker */
 ```
 
@@ -249,10 +251,12 @@ In browser, `responseType` value could be one of `arrayBuffer`, `blob`, `formDat
 
 In Node.js, `formData` is NOT supported.
 
+If `responseType` is `none`, it will return the original `response` object.
+
 ### New `query` option
 
 ```js
-const results = await swRequest.fetch({ query: { search: 'luke' } });
+const results = await swRequest.fetch({ query: { search: "luke" } });
 /* final URL will be "https://swapi.co/api/people?search=luke" */
 ```
 
@@ -264,8 +268,8 @@ If `url` has search fields (like `https://swapi.co/api/people?search=luke`), que
 
 ```js
 const results = await swRequest.fetch({
-    method: 'POST',
-    body: { name: 'Luke Skywalker' }, /* <-- could be a JSON */
+  method: "POST",
+  body: { name: "Luke Skywalker" } /* <-- could be a JSON */
 });
 /* final body will be '{"name":"Luke Skywalker"}' */
 ```
@@ -291,12 +295,14 @@ Value `form` is short for `application/x-www-form-urlencoded`, and `json` is sho
 Will throw error if `response` status is non-2xx.
 
 ```js
-await swRequest.fetch({
+await swRequest
+  .fetch({
     simple: true,
-    url: '/400', /* simulate response with 400 HTTP status */
-}).catch((err) => {
+    url: "/400" /* simulate response with 400 HTTP status */
+  })
+  .catch(err => {
     console.error(err); /* <-- Error: Bad Request  */
-});
+  });
 ```
 
 ### Polyfill `AbortController`
