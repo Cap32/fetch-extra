@@ -30,6 +30,7 @@ Extra features for [whatwg fetch](https://developer.mozilla.org/en-US/docs/Web/A
   - [New `responseTransformer` option](#new-responsetransformer-option)
   - [New `responseDataTransformer` option](#new-responsedatatransformer-option)
   - [New `errorTransformer` option](#new-errortransformer-option)
+- [Contributing](#contributing)
 - [License](#license)
 
 ## Installations
@@ -446,6 +447,10 @@ const baseRequest = new Request({
 });
 /* ... */
 ```
+
+## Contributing
+
+Please [checkout CONTRIBUTING.md](/CONTRIBUTING.md)
 
 ## License
 
