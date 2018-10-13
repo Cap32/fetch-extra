@@ -289,8 +289,10 @@ export default function fetchExtreCore({
 			const request = this.clone(...args);
 			let response = null;
 			let timeoutPromise;
+			let opts = null;
 			return compose(request)
 				.then(options => {
+					opts = options;
 					const { responseType, timeout, simple, signal } = options;
 					const shouldHandleRes = res => {
 						if (!res || !res.ok || !responseType || responseType === 'none') {
@@ -337,6 +339,7 @@ export default function fetchExtreCore({
 				})
 				.catch(err => {
 					err.response = response;
+					err.options = opts;
 					if (timeoutPromise) timeoutPromise.clear();
 					return request
 						._applyErrorTransformer(err)
