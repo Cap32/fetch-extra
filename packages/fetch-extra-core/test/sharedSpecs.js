@@ -553,6 +553,17 @@ export default function sharedSpecs(name, fetch) {
 					})
 				);
 			});
+
+			test('should include a `options` object in error object', async () => {
+				try {
+					await fetch('http://localhost:1');
+				} catch (err) {
+					expect(err.options).toMatchObject({
+						url: 'http://localhost:1',
+						method: 'GET'
+					});
+				}
+			});
 		});
 
 		describe('transformers', () => {
