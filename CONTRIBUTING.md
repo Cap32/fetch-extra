@@ -24,12 +24,6 @@ Ensure you have it installed before continuing.
 $ yarn
 ```
 
-And then installing all their dependencies in each packages by `bootstrap` script.
-
-```sh
-$ yarn bootstrap
-```
-
 ## Running Tests
 
 ```sh
