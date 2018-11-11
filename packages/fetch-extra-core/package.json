@@ -1,6 +1,6 @@
 {
 	"name": "fetch-extra-core",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "the core module for creating `fetch-extra`",
 	"repository": "Cap32/fetch-extra",
 	"scripts": {
